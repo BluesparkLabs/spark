@@ -1,13 +1,12 @@
 {
-    "name": "BluesparkLabs/spark",
     "description": "Composer.json definition to be merged into Drupal 8 projects using `wikimedia/composer-merge-plugin`.",
     "type": "metapackage",
-    "repositories": [
-        {
+    "repositories": {
+        "drupal": {
             "type": "composer",
-            "url": "https://packages.drupal.org/8"
+            "url": "https://packages.drupal.org/7"
         }
-    ],
+    },
     "require": {
         "composer/installers": "^1.2",
         "cweagans/composer-patches": "^1.6",
