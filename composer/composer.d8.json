@@ -24,7 +24,7 @@
     },
     "autoload": {
         "classmap": [
-            "scripts/composer/ScriptHandler.php"
+            "../scripts/composer/ScriptHandler.php"
         ]
     },
     "scripts": {
