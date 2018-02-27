@@ -1,0 +1,50 @@
+{
+    "name": "BluesparkLabs/spark",
+    "description": "Composer.json definition to be merged into Drupal 8 projects using `wikimedia/composer-merge-plugin`.",
+    "type": "metapackage",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
+    ],
+    "require": {
+        "composer/installers": "^1.2",
+        "cweagans/composer-patches": "^1.6",
+        "drupal-composer/drupal-scaffold": "^2.2",
+        "drupal/console": "^1.0.2",
+        "drupal/core": "~8.4",
+        "drush/drush": "^9.0.0"
+    },
+    "require-dev": {
+        "drupal/coder": "^8.2.12",
+        "phpunit/phpunit": ">=4.8.35 <5"
+    },
+    "conflict": {
+        "drupal/drupal": "*"
+    },
+    "autoload": {
+        "classmap": [
+            "scripts/composer/ScriptHandler.php"
+        ]
+    },
+    "scripts": {
+        "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
+        "post-install-cmd": [
+            "Spark\\composer\\ScriptHandler::createRequiredFiles"
+        ],
+        "post-update-cmd": [
+            "Spark\\composer\\ScriptHandler::createRequiredFiles"
+        ]
+    },
+    "extra": {
+        "installer-paths": {
+            "www/core": ["type:drupal-core"],
+            "www/libraries/{$name}": ["type:drupal-library"],
+            "www/modules/contrib/{$name}": ["type:drupal-module"],
+            "www/profiles/contrib/{$name}": ["type:drupal-profile"],
+            "www/themes/contrib/{$name}": ["type:drupal-theme"],
+            "drush/contrib/{$name}": ["type:drupal-drush"]
+        }
+    }
+}
