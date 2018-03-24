@@ -12,7 +12,7 @@ services:
       DB_DRIVER: mysql
       COMPOSER_ALLOW_SUPERUSER: 1
     volumes:
-      - "./:/var/www/html"
+      - "${SPARK_WORKDIR}:/var/www/html"
 
   nginx:
     image: wodby/drupal-nginx:8-1.13-4.0.2
@@ -25,7 +25,7 @@ services:
       NGINX_BACKEND_HOST: php
       NGINX_SERVER_ROOT: /var/www/html/www
     volumes:
-      - "./:/var/www/html"
+      - "${SPARK_WORKDIR}:/var/www/html"
     ports:
       - "7500:80"
 
