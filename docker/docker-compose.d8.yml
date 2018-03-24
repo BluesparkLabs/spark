@@ -3,9 +3,8 @@ version: '2.1'
 services:
 
   php:
-    image: wodby/php:7.1-3.0.0
+    image: wodby/drupal-php:7.1-dev-4.2.2
     environment:
-      PHP_FPM_CLEAR_ENV: "no"
       DB_HOST: db
       DB_USER: spark
       DB_PASSWORD: spark
@@ -16,7 +15,7 @@ services:
       - "./:/var/www/html"
 
   nginx:
-    image: wodby/drupal-nginx:7-1.13-3.0.1
+    image: wodby/drupal-nginx:8-1.13-4.0.2
     depends_on:
       - php
     environment:
