@@ -11,6 +11,8 @@ services:
       DB_NAME: spark
       DB_DRIVER: mysql
       COMPOSER_ALLOW_SUPERUSER: 1
+      SPARK_PHP: 1
+    working_dir: /var/www/html/www
     volumes:
       - "${SPARK_WORKDIR}:/var/www/html"
 
