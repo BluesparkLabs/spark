@@ -21,7 +21,7 @@ class DrushCommands extends \BluesparkLabs\Spark\Robo\Tasks {
     }
     else {
       $this->drush = $this->workDir . '/vendor/bin/drush';
-      $this->root = $this->workDir . '/www';
+      $this->root = $this->workDir . '/web';
     }
     $this->setCommandBase();
   }

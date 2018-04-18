@@ -9,7 +9,7 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
   public function drupalFiles() {
     $this->title('Preparing Drupal directories and files');
     $fs = new Filesystem();
-    $drupalRoot = $this->workDir . '/www';
+    $drupalRoot = $this->workDir . '/web';
 
     foreach (['modules', 'profiles', 'themes'] as $dir) {
       if (!$fs->exists($drupalRoot . '/'. $dir)) {
