@@ -47,6 +47,6 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
   }
 
   public function drupalInstall() {
-    $this->taskSparkExec('drush', 'site-install -y standard --account-name=admin --account-pass=admin');
+    $this->taskSparkExec('drush', ['site-install -y standard --account-name=admin --account-pass=admin']);
   }
 }

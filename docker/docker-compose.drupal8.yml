@@ -42,3 +42,10 @@ services:
       test: "mysqladmin -uroot -proot ping --silent"
     ports:
       - "7501:3306"
+
+  solr:
+    image: wodby/drupal-solr:8-6.6-2.4.0
+    environment:
+      SOLR_HEAP: 1024m
+    ports:
+      - "7502:8983"

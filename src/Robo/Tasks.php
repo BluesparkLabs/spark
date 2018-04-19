@@ -55,7 +55,11 @@ class Tasks extends \Robo\Tasks {
     }
   }
 
-  protected function taskSparkExec($command, $args = '') {
-    $this->taskExec(sprintf('composer run -d %s robo %s "%s"', $this->workDir, $command, $args))->run();
+  protected function taskSparkExec($command, $args = []) {
+    // Wrap all arguments in double quotes.
+    foreach ($args as &$arg) {
+      $arg = sprintf('"%s"', $arg);
+    }
+    $this->taskExec(sprintf('composer run -d %s robo %s %s', $this->workDir, $command, implode(' ', $args)))->run();
   }
 }

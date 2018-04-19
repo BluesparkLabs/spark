@@ -21,10 +21,23 @@ class ContainerCommands extends \BluesparkLabs\Spark\Robo\Tasks {
   }
 
   public function containersDestroy() {
+    $this->validateConfig();
     $this->title('Destroying containers');
     $this->taskDockerComposeDown()
       ->file($this->dockerComposeFile)
       ->projectName($this->config->get('name'))
+      ->run();
+  }
+
+  public function containersExec($container, $execute_command) {
+    $this->validateConfig();
+    $this->title('Executing on container: ' . $container, FALSE);
+    $this->taskDockerComposeExecute()
+      ->file($this->dockerComposeFile)
+      ->projectName($this->config->get('name'))
+      ->disablePseudoTty()
+      ->setContainer(' ' . $container)
+      ->exec($execute_command)
       ->run();
   }
 
