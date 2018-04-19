@@ -45,4 +45,8 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
       $this->say('Files directory is already in place, skipping');
     }
   }
+
+  public function drupalInstall() {
+    $this->taskSparkExec('drush', 'site-install -y standard --account-name=admin --account-pass=admin');
+  }
 }

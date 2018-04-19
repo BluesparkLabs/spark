@@ -54,4 +54,8 @@ class Tasks extends \Robo\Tasks {
       throw new Exception('Invalid configuration for Spark.');
     }
   }
+
+  protected function taskSparkExec($command, $args = '') {
+    $this->taskExec(sprintf('composer run -d %s robo %s "%s"', $this->workDir, $command, $args))->run();
+  }
 }

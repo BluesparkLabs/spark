@@ -36,8 +36,7 @@
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
         "post-install-cmd": "composer run robo drupal:files",
         "post-update-cmd": "composer run robo drupal:files",
-        "robo": "SPARK_WORKDIR=${PWD} robo --ansi --load-from vendor/bluesparklabs/spark",
-        "drupal-install": "composer run robo drush 'site-install -y standard --account-name=admin --account-pass=admin'"
+        "robo": "SPARK_WORKDIR=${PWD} robo --ansi --load-from vendor/bluesparklabs/spark"
     },
     "extra": {
         "installer-paths": {
