@@ -4,6 +4,7 @@ USER root
 
 RUN mkdir -p /opt/drupalextension
 ADD composer.json /opt/drupalextension
+ADD composer.lock /opt/drupalextension
 RUN composer install -d /opt/drupalextension
 
 USER wodby
