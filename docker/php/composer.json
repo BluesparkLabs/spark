@@ -1,0 +1,13 @@
+{
+  "require": {
+      "drupal/drupal-extension": "~3.4",
+      "dmore/chrome-mink-driver": "^2.4.1",
+      "dmore/behat-chrome-extension": "dev-master@dev",
+      "symfony/dependency-injection": "~2.8",
+      "symfony/event-dispatcher": "~2.8",
+      "symfony/yaml": "~2.8"
+  },
+  "config": {
+      "bin-dir": "bin/"
+  }
+}

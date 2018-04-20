@@ -3,15 +3,16 @@ version: '2.1'
 services:
 
   php:
-    image: wodby/drupal-php:7.1-dev-4.2.2
+    build: ./php
     environment:
+      SPARK_PHP: 1
       DB_HOST: db
       DB_USER: spark
       DB_PASSWORD: spark
       DB_NAME: spark
       DB_DRIVER: mysql
       COMPOSER_ALLOW_SUPERUSER: 1
-      SPARK_PHP: 1
+      PHP_FPM_CLEAR_ENV: "no"
     working_dir: /var/www/html/web
     volumes:
       - "${SPARK_WORKDIR}:/var/www/html"
