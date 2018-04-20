@@ -18,8 +18,6 @@ class ContainerCommands extends \BluesparkLabs\Spark\Robo\Tasks {
       ->projectName($this->config->get('name'))
       ->detachedMode()
       ->run();
-
-    $this->taskSparkExec('solr:init');
   }
 
   public function containersDestroy() {
@@ -33,7 +31,7 @@ class ContainerCommands extends \BluesparkLabs\Spark\Robo\Tasks {
 
   public function containersExec($container, $execute_command) {
     $this->validateConfig();
-    $this->title('Executing on container: ' . $container, FALSE);
+    $this->title('Executing in container: ' . $container, FALSE);
     $this->taskDockerComposeExecute()
       ->file($this->dockerComposeFile)
       ->projectName($this->config->get('name'))
