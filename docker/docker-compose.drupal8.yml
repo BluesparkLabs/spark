@@ -50,3 +50,11 @@ services:
       SOLR_HEAP: 1024m
     ports:
       - "7502:8983"
+
+  chrome:
+    build: ./chrome
+    shm_size: '1gb'
+    ports:
+      - '9222:9222'
+    cap_add:
+      - SYS_ADMIN
