@@ -18,6 +18,8 @@ class ContainerCommands extends \BluesparkLabs\Spark\Robo\Tasks {
       ->projectName($this->config->get('name'))
       ->detachedMode()
       ->run();
+
+    $this->taskSparkExec('solr:init');
   }
 
   public function containersDestroy() {
