@@ -33,7 +33,7 @@ services:
       - "7500:80"
 
   db:
-    image: wodby/mariadb:10.1-2.3.5
+    build: ./db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: spark
@@ -41,6 +41,8 @@ services:
       MYSQL_PASSWORD: spark
     healthcheck:
       test: "mysqladmin -uroot -proot ping --silent"
+    volumes:
+      - "${SPARK_WORKDIR}:/opt/spark-project"
     ports:
       - "7501:3306"
 
