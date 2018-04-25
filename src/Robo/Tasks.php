@@ -63,7 +63,10 @@ class Tasks extends \Robo\Tasks {
     $this->taskExec(sprintf('composer run -d %s robo %s %s', $this->workDir, $command, implode(' ', $args)))->run();
   }
 
-  protected function taskSparkContainerShExec($container, $command) {
+  protected function taskSparkContainerExec($container, $command) {
+    if (is_array($command)) {
+      $command = implode('; ', $command);
+    }
     $cmd_tpl = 'composer run -d %s robo containers:exec \'%s\' \'/bin/sh -c "%s"\'';
     $this->taskExec(sprintf($cmd_tpl, $this->workDir, $container, $command))->run();
   }
