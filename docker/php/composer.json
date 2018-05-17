@@ -1,13 +1,12 @@
 {
-  "require": {
-      "drupal/drupal-extension": "~3.4",
-      "dmore/chrome-mink-driver": "^2.4.1",
-      "dmore/behat-chrome-extension": "dev-master@dev",
-      "symfony/dependency-injection": "~2.8",
-      "symfony/event-dispatcher": "~2.8",
-      "symfony/yaml": "~2.8"
-  },
-  "config": {
-      "bin-dir": "bin/"
-  }
+    "require": {
+        "drupal/drupal-extension": "v4.0.0beta1",
+        "dmore/chrome-mink-driver": "^2.4.1",
+        "dmore/behat-chrome-extension": "dev-master@dev",
+        "drupal/drupal-driver": "2.0.x-dev",
+        "symfony/yaml": "~3.4"
+    },
+    "config": {
+        "bin-dir": "bin/"
+    }
 }
