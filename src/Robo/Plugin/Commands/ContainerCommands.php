@@ -75,7 +75,7 @@ class ContainerCommands extends \BluesparkLabs\Spark\Robo\Tasks {
   }
 
   /**
-   * Limit composer to specific service.
+   * Limit compose to specific service.
    *
    * @param \Robo\Contract\CommandInterface $command
    *   Docker compose commmand.
