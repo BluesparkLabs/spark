@@ -15,16 +15,16 @@ class ContainerCommands extends \BluesparkLabs\Spark\Robo\Tasks {
   /**
    * Compose all the docker containers.
    *
-   * @param string $service
-   *   Limit compose to specific container service.
+   * @param string $container
+   *   Container name, when not provided all containers are started.
    */
-  public function containersStart($service = NULL) {
+  public function containersStart($container = NULL) {
     $this->validateConfig();
     $this->title('Starting containers');
     $command = $this->taskDockerComposeUp();
 
-    if ($service) {
-      $this->limitComposeService($command, $service);
+    if ($container) {
+      $this->limitComposeContainer($command, $container);
     }
 
     $command->file($this->dockerComposeFile)
@@ -49,7 +49,7 @@ class ContainerCommands extends \BluesparkLabs\Spark\Robo\Tasks {
    * Execute a command on a given container.
    *
    * @param string $container
-   *   Container service name.
+   *   Container name.
    * @param string $execute_command
    *   Command to execute.
    */
@@ -75,15 +75,15 @@ class ContainerCommands extends \BluesparkLabs\Spark\Robo\Tasks {
   }
 
   /**
-   * Limit compose to specific service.
+   * Limit compose to specific container.
    *
    * @param \Robo\Contract\CommandInterface $command
    *   Docker compose commmand.
-   * @param string $service
-   *   Service name as defined on docker compose file.
+   * @param string $container
+   *   Container name as defined on docker compose file.
    */
-  private function limitComposeService(CommandInterface $command, $service) {
-    $command->setService($service);
+  private function limitComposeContainer(CommandInterface $command, $container) {
+    $command->setService($container);
   }
 
 }
