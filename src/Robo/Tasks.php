@@ -20,9 +20,9 @@ class Tasks extends \Robo\Tasks {
 
   public function __construct() {
     $this->stopOnFail(true);
-    // Get the current working directory. Robo always changes the directory to where
-    // the RoboFile is located, but we never call the commands from there.
-    // See: https://github.com/consolidation/Robo/issues/413.
+    // Get the current working directory. Robo always changes the directory
+    // to where  the RoboFile is located, but we never call the commands from
+    // there. See https://github.com/consolidation/Robo/issues/413
     $this->workDir = getenv('PWD');
     // Load config file from the project: .spark.yml.
     try {
@@ -41,8 +41,8 @@ class Tasks extends \Robo\Tasks {
 
   protected function validateConfig() {
     // Although it would be great, we're not calling this method from the
-    // constructor, because the messages are suppressed from there. So instead each
-    // command needs to invoke this method.
+    // constructor, because the messages are suppressed from there. So
+    // instead each command needs to invoke this method.
     try {
       v::key('name', v::stringType()->length(1,32))
         ->key('platform', v::in(['drupal8']))
