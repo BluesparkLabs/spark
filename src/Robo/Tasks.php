@@ -7,6 +7,7 @@ use Noodlehaus\Exception;
 use Noodlehaus\Exception\FileNotFoundException;
 use Respect\Validation\Exceptions\NestedValidationException;
 use Respect\Validation\Validator as v;
+use Robo\Contract\VerbosityThresholdInterface;
 
 class Tasks extends \Robo\Tasks {
 
@@ -70,4 +71,20 @@ class Tasks extends \Robo\Tasks {
     $cmd_tpl = 'composer run -d %s robo containers:exec \'%s\' \'/bin/sh -c "%s"\'';
     $this->taskExec(sprintf($cmd_tpl, $this->workDir, $container, $command))->run();
   }
+
+  protected function containerExists($container) {
+    $this->validateConfig();
+    $project = $this->config->get('name');
+    $ps = $this->taskDockerComposePs()
+      ->file($this->dockerComposeFile)
+      ->projectName($project)
+      ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
+      ->printOutput(FALSE)
+      ->run()
+      ->getMessage();
+    $container_name = strtolower($project) . '_' . $container;
+    $regex = '/' . $container_name . '/m';
+    return preg_match($regex, $ps);
+  }
+
 }

@@ -11,10 +11,8 @@ class DrushCommands extends \BluesparkLabs\Spark\Robo\Tasks {
   private $isContainer;
   private $commandBase;
 
-  public function __construct() {
-    parent::__construct();
-
-    $this->setIsContainer();
+  private function prepare() {
+    $this->isContainer = $this->containerExists('php');
     if ($this->isContainer) {
       $this->drush = '../vendor/bin/drush';
       $this->root = '.';
@@ -23,11 +21,11 @@ class DrushCommands extends \BluesparkLabs\Spark\Robo\Tasks {
       $this->drush = $this->workDir . '/vendor/bin/drush';
       $this->root = $this->workDir . '/web';
     }
-    $this->setCommandBase();
+    $this->commandBase = sprintf('%s --root=%s', $this->drush, $this->root);
   }
 
   public function drush(array $args) {
-    $this->validateConfig();
+    $this->prepare();
     $this->title('Executing Drush command');
     $command = $this->commandBase . ' ' . implode(' ', $args);
 
@@ -46,14 +44,4 @@ class DrushCommands extends \BluesparkLabs\Spark\Robo\Tasks {
       $this->taskExec($command)->run();
     }
   }
-
-  private function setIsContainer() {
-    // @todo Implement.
-    $this->isContainer = TRUE;
-  }
-
-  private function setCommandBase() {
-    $this->commandBase = sprintf('%s --root=%s', $this->drush, $this->root);
-  }
-
 }

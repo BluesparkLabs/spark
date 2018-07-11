@@ -3,6 +3,7 @@
 namespace BluesparkLabs\Spark\Robo\Plugin\Commands;
 
 use Robo\Contract\CommandInterface;
+use Robo\Contract\VerbosityThresholdInterface;
 
 class ContainerCommands extends \BluesparkLabs\Spark\Robo\Tasks {
 
@@ -63,6 +64,20 @@ class ContainerCommands extends \BluesparkLabs\Spark\Robo\Tasks {
       ->setContainer(' ' . $container)
       ->exec($execute_command)
       ->run();
+  }
+
+  /**
+   * Lists the currently active containers.
+   */
+  public function containersActive() {
+    $ps = $this->taskDockerComposePs()
+      ->file($this->dockerComposeFile)
+      ->projectName($this->config->get('name'))
+      ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
+      ->printOutput(FALSE)
+      ->run()
+      ->getMessage();
+    $this->say("$ps");
   }
 
   /**
