@@ -18,7 +18,8 @@
         "drupal/core": "~8.4",
         "drush/drush": "~8",
         "hassankhan/config": "^1.0.0",
-        "respect/validation": "^1.1.15"
+        "respect/validation": "^1.1.15",
+        "vlucas/phpdotenv": "^2.5"
     },
     "require-dev": {
         "drupal/coder": "^8.2.12",

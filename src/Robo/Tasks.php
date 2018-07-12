@@ -2,6 +2,7 @@
 
 namespace BluesparkLabs\Spark\Robo;
 
+use Dotenv\Dotenv;
 use Noodlehaus\Config;
 use Noodlehaus\Exception;
 use Noodlehaus\Exception\FileNotFoundException;
@@ -24,6 +25,12 @@ class Tasks extends \Robo\Tasks {
     // to where  the RoboFile is located, but we never call the commands from
     // there. See https://github.com/consolidation/Robo/issues/413
     $this->workDir = getenv('PWD');
+
+    // Load environment variables from `.env` file into `getenv()` for use
+    // by other tasks and commands.
+    $dotenv = new Dotenv($this->workDir);
+    $dotenv->load();
+
     // Load config file from the project: .spark.yml.
     try {
       $this->config = Config::load($this->workDir . '/' . Tasks::CONFIG_FILE_NAME);
