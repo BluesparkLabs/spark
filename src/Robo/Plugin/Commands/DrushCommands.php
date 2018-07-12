@@ -7,7 +7,6 @@ class DrushCommands extends \BluesparkLabs\Spark\Robo\Tasks {
   use \Droath\RoboDockerCompose\Task\loadTasks;
 
   private $drush;
-  private $root;
   private $isContainer;
   private $commandBase;
 
@@ -15,13 +14,12 @@ class DrushCommands extends \BluesparkLabs\Spark\Robo\Tasks {
     $this->isContainer = $this->containerExists('php');
     if ($this->isContainer) {
       $this->drush = '../vendor/bin/drush';
-      $this->root = '.';
+      $this->webRoot = '.';
     }
     else {
       $this->drush = $this->workDir . '/vendor/bin/drush';
-      $this->root = $this->workDir . '/web';
     }
-    $this->commandBase = sprintf('%s --root=%s', $this->drush, $this->root);
+    $this->commandBase = sprintf('%s --root=%s', $this->drush, $this->webRoot);
   }
 
   public function drush(array $args) {

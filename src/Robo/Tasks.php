@@ -17,6 +17,7 @@ class Tasks extends \Robo\Tasks {
 
   protected $config;
   protected $workDir;
+  protected $webRoot;
   protected $dockerComposeFile;
   protected $roboExecutable;
 
@@ -47,6 +48,12 @@ class Tasks extends \Robo\Tasks {
     }
     $this->dockerComposeFile = './docker/docker-compose.' . $this->config->get('platform') . '.yml';
     $this->roboExecutable = $this->workDir . '/vendor/bin/robo';
+
+    $this->webRoot = $this->workDir . '/web';
+    if ($webRoot = $this->config->get('webroot')) {
+      $separator = (substr($webRoot, 0, 1) === '/') ? '' : '/';
+      $this->webRoot = $this->workDir . $separator . $webRoot;
+    }
   }
 
   protected function title($message, $ellipsis = TRUE) {

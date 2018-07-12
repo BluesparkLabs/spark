@@ -9,12 +9,11 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
   public function drupalFiles() {
     $this->title('Preparing Drupal directories and files');
     $fs = new Filesystem();
-    $drupalRoot = $this->workDir . '/web';
 
     foreach (['modules', 'profiles', 'themes'] as $dir) {
-      if (!$fs->exists($drupalRoot . '/'. $dir)) {
-        $fs->mkdir($drupalRoot . '/'. $dir);
-        $fs->touch($drupalRoot . '/'. $dir . '/.gitkeep');
+      if (!$fs->exists($this->webRoot . '/'. $dir)) {
+        $fs->mkdir($this->webRoot . '/'. $dir);
+        $fs->touch($this->webRoot . '/'. $dir . '/.gitkeep');
       }
     }
 
@@ -23,10 +22,10 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
       'settings.php',
       'settings.spark.php',
     ];
-    if (!$fs->exists($drupalRoot . '/sites/default/settings.php')) {
+    if (!$fs->exists($this->webRoot . '/sites/default/settings.php')) {
       foreach ($settingsFiles as $file) {
-        $fs->copy('drupal/d8/' . $file, $drupalRoot . '/sites/default/' . $file);
-        $fs->chmod($drupalRoot . '/sites/default/' . $file, 0666);
+        $fs->copy('drupal/d8/' . $file, $this->webRoot . '/sites/default/' . $file);
+        $fs->chmod($this->webRoot . '/sites/default/' . $file, 0666);
       }
       $this->say('Copied settings.php files');
     }
@@ -35,9 +34,9 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
     }
 
     // Create the files directory with chmod 0777
-    if (!$fs->exists($drupalRoot . '/sites/default/files')) {
+    if (!$fs->exists($this->webRoot . '/sites/default/files')) {
       $oldmask = umask(0);
-      $fs->mkdir($drupalRoot . '/sites/default/files', 0777);
+      $fs->mkdir($this->webRoot . '/sites/default/files', 0777);
       umask($oldmask);
       $this->say('Created files directory');
     }
