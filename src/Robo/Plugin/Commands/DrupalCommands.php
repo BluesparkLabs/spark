@@ -3,8 +3,11 @@
 namespace BluesparkLabs\Spark\Robo\Plugin\Commands;
 
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Console\Input\InputOption;
 
 class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
+
+  use \Droath\RoboDockerCompose\Task\loadTasks;
 
   public function drupalFiles() {
     $this->title('Preparing Drupal directories and files');
@@ -47,5 +50,99 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
 
   public function drupalInstall() {
     $this->taskSparkExec('drush', ['site-install -y standard --account-name=admin --account-pass=admin']);
+  }
+
+  /**
+   * Backup Drupal files and database to Amazon S3.
+   *
+   * Example configuration in .spark.yml:
+   *
+   * ```
+   *  command:
+   *    drupal:
+   *      backup:
+   *        options:
+   *          truncate: cache,cache_*,sessions,watchdog
+   *          skip: migrate_*
+   *          files:
+   *            - web/sites/default/files
+   *            - private
+   *          exclude:
+   *            - css
+   *            - js
+   *            - styles
+   *            - xmlsitemap
+   *            - backup_migrate
+   *            - ctools
+   *            - php
+   * ```
+   *
+   * @param array $opts
+   * @options $truncate  A comma-separated list of tables from which to
+   *                     truncate values in the db dump. This maps to the
+   *                     drush sql-dump --structure-table-list option.
+   *                     Default value is 'cache,cache_*,sessions,watchdog'.
+   *          $skip      A comma-separated list of tables from which to
+   *                     exclude from the db dump.
+   *          $files     A string or array of paths/to/files/or/folders to
+   *                     include in the tarball. Paths should be relative
+   *                     to the project root directory and not to the webroot.
+   *          $exclude   A string or array of filenames/foldernames to
+   *                     exclude from the tarball.
+   */
+  public function drupalBackup($opts = [
+    'truncate' => 'cache,cache_*,watchdog,sessions',
+    'skip' => '',
+    'files' => null,
+    'exclude' => null
+  ]) {
+
+    // Create unique backup filenames using application name, current
+    // environment, and date and time stamp.
+    $timestamp = $this->executeDateTime;
+    $name = $this->config->get('name');
+    $environment = getenv('ENVIRONMENT') ?: 'default';
+    $filename = $this->cleanFileName("{$name}-{$environment}-{$timestamp}");
+    $dumpfile = "{$filename}.sql";
+    $tarfile = "{$filename}.tgz";
+
+    $this->title('Executing Drupal backup command');
+    $this->say("DB Dumpfile: {$dumpfile}");
+
+
+    $this->taskSparkExec('drush', ["sql-dump --gzip --result-file={$dumpfile} --structure-tables-list={$opts['truncate']} --skip-tables-list={$opts['skip']}"]);
+
+    // Backup Drupal files folder.
+    $tarTask = $this->taskExec('tar');
+    $tarTask->dir($this->workDir);
+
+    // Directories/files to exclude from tarball.
+    if (empty($opts['exclude'])) {
+      $opts['exclude'] = [
+        'css',
+        'js',
+        'ctools',
+        'php',
+        'styles',
+        'backup_migrate',
+        'xmlsitemap',
+      ];
+    }
+    $tarTask->optionList('exclude', $opts['exclude'], '=');
+
+    // Exeution options: gzip, create, verbose, filename
+    $tarTask->option("-zcvf", "{$tarfile}", " ");
+
+    // Files and directories to include.
+    if (empty($opts['files'])) {
+      $opts['files'] = $this->webRoot . '/sites/default/files';
+    }
+    $tarTask->args($opts['files']);
+
+    $tarTask->run();
+
+    // @todo implement sync to s3
+
+    // @todo implement cleanup s3 dumps older than 15 days
   }
 }

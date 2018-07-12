@@ -20,9 +20,15 @@ class Tasks extends \Robo\Tasks {
   protected $webRoot;
   protected $dockerComposeFile;
   protected $roboExecutable;
+  protected $executeDateTime;
 
   public function __construct() {
     $this->stopOnFail(true);
+
+    // Store a date/time stamp for use across tasks, useful for creating
+    // unique output filenames.
+    $this->executeDateTime = gmdate('Y-m-d--H-i-s', time());
+
     // Get the current working directory. Robo always changes the directory
     // to where  the RoboFile is located, but we never call the commands from
     // there. See https://github.com/consolidation/Robo/issues/413
@@ -108,4 +114,38 @@ class Tasks extends \Robo\Tasks {
     return preg_match($regex, $ps);
   }
 
+  /**
+   * Converts random strings to clean filenames.
+   *
+   * The cleanups are loosly based on drupal_clean_css_identifier().
+   * - prefer dash-separated words.
+   * - strip special characters.
+   * - down-case alphabetical letters.
+   */
+  protected function cleanFileName($identifier) {
+
+    // Convert or strip certain special characters, by convention.
+    $filter = [
+      ' ' => '-',
+      '_' => '-',
+      '/' => '-',
+      '[' => '-',
+      ']' => '',
+    ];
+    $identifier = strtr($identifier, $filter);
+
+    // Valid characters in a clean filename identifier are:
+    // - the hyphen (U+002D)
+    // - the period (U+002E)
+    // - a-z (U+0030 - U+0039)
+    // - A-Z (U+0041 - U+005A)
+    // - the underscore (U+005F)
+    // - 0-9 (U+0061 - U+007A)
+    // - ISO 10646 characters U+00A1 and higher
+    // We strip out any character not in the above list
+    $identifier = preg_replace('/[^\\x{002D}\\x{002E}\\x{0030}-\\x{0039}\\x{0041}-\\x{005A}\\x{005F}\\x{0061}-\\x{007A}\\x{00A1}-\\x{FFFF}]/u', '', $identifier);
+
+    // Convert everything to lowercase
+    return strtolower($identifier);
+  }
 }
