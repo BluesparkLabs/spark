@@ -8,6 +8,7 @@
         }
     },
     "require": {
+        "aws/aws-sdk-php": "^3.62",
         "boedah/robo-drush": "^3.1.1",
         "composer/installers": "^1.2",
         "consolidation/robo": "^1.2.2",
