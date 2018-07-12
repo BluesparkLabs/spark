@@ -9,6 +9,7 @@ use Noodlehaus\Exception\FileNotFoundException;
 use Respect\Validation\Exceptions\NestedValidationException;
 use Respect\Validation\Validator as v;
 use Robo\Contract\VerbosityThresholdInterface;
+use Robo\Robo;
 
 class Tasks extends \Robo\Tasks {
 
@@ -33,7 +34,13 @@ class Tasks extends \Robo\Tasks {
 
     // Load config file from the project: .spark.yml.
     try {
-      $this->config = Config::load($this->workDir . '/' . Tasks::CONFIG_FILE_NAME);
+      $spark_config = $this->workDir . '/' . Tasks::CONFIG_FILE_NAME;
+      $this->config = Config::load($spark_config);
+
+      // The spark config file may also contain default options for Robo
+      // commands and tasks, so load it into Robo as well.
+      // See https://robo.li/getting-started/#configuration for formatting
+      Robo::loadConfiguration([$spark_config]);
     }
     catch (FileNotFoundException $exception) {
       throw new \Exception('Missing configuration file: ' . Tasks::CONFIG_FILE_NAME);
