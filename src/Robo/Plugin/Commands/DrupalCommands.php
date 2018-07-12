@@ -55,6 +55,10 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
   /**
    * Backup Drupal files and database to Amazon S3.
    *
+   * Expected usage:
+   *
+   *     $ composer run spark drupal:backup --timeout=0
+   *
    * Example configuration in .spark.yml:
    *
    * ```
@@ -107,12 +111,10 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
     $tarfile = "{$filename}.tgz";
 
     $this->title('Executing Drupal backup command');
-    $this->say("DB Dumpfile: {$dumpfile}");
-
-
     $this->taskSparkExec('drush', ["sql-dump --gzip --result-file={$dumpfile} --structure-tables-list={$opts['truncate']} --skip-tables-list={$opts['skip']}"]);
 
     // Backup Drupal files folder.
+    $this->title('Creating Drupal files tarball');
     $tarTask = $this->taskExec('tar');
     $tarTask->dir($this->workDir);
 
@@ -131,13 +133,16 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
     $tarTask->optionList('exclude', $opts['exclude'], '=');
 
     // Exeution options: gzip, create, verbose, filename
-    $tarTask->option("-zcvf", "{$tarfile}", " ");
+    $tarTask->option("-zcf", "{$tarfile}", " ");
 
     // Files and directories to include.
     if (empty($opts['files'])) {
       $opts['files'] = $this->webRoot . '/sites/default/files';
     }
     $tarTask->args($opts['files']);
+
+    $this->say(" ... be patient, this may take some time ... ");
+    $this->say(" ... if the operation times out try with --timeout=0 ... ");
 
     $tarTask->run();
 
