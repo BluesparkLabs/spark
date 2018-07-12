@@ -99,6 +99,16 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
    *                     file. Finally, if you specify a custom profile
    *                     value, the SDK loads credentials from that profile.
    *                     See http://bit.ly/aws-creds-file for formatting info.
+   *          $keep      A string representing a relative amount of time to
+   *                     keep backups. The string must be parsable by PHP
+   *                     `strtotime`. The default value is '15 days', which
+   *                     is the recommendation for GDPR compliance. Files
+   *                     found in the backup folder on S3 that are older than
+   *                     this time will be removed.  New files uploaded to S3
+   *                     will have an Expires value set to now plus the
+   *                     specified time.  WARNING: be very careful modifying
+   *                     the value of this option as it can and will delete
+   *                     existing backups.
    *          $truncate  A comma-separated list of tables from which to
    *                     truncate values in the db dump. This maps to the
    *                     drush sql-dump --structure-table-list option.
@@ -115,6 +125,7 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
     'bucket' => InputOption::VALUE_REQUIRED,
     'region' => 'us-east-1',
     'profile' => 'default',
+    'keep' => '15 days',
     'truncate' => 'cache,cache_*,watchdog,sessions',
     'skip' => '',
     'files' => null,
@@ -124,9 +135,11 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
     // Create unique backup filenames using application name, current
     // environment, and date and time stamp.
     $timestamp = $this->executeDateTime;
+    $timelimit = strtotime('now - ' . $opts['keep'] . ' UTC');
     $application = $this->cleanFileName($this->config->get('name'));
     $environment = getenv('ENVIRONMENT') ?: 'default';
-    $filename = $this->cleanFileName("{$application}-{$environment}-{$timestamp}");
+    $prefix = $this->cleanFileName("{$application}-{$environment}");
+    $filename = $this->cleanFileName("{$prefix}-{$timestamp}");
     $dumpfile = "{$filename}.sql";
     $tarfile = "{$filename}.tgz";
 
@@ -201,10 +214,44 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
       ]);
       $this->say("Files tarball uploaded to: {$result['ObjectURL']}");
 
+      // Delete backup files that are older than the desired time limit.
+      $this->title("Delete S3 backups older than {$opts['keep']} in bucket: {$opts['bucket']}");
+
+      // Note: this will list up to a maximum of 1000 files, I hope there
+      // wouldn't be more than that.
+      $result = $s3Client->listObjects([
+        'Bucket' => $opts['bucket'],
+        'Marker' => $application . '/',
+        'Prefix' => $application . '/' . $prefix,
+      ]);
+      $confirm_delete = '';
+      foreach ($result['Contents'] as $file) {
+        $filedate = strtotime($file['LastModified']);
+        if ($filedate < $timelimit) {
+          $this->say("{$file['Key']} is more than {$opts['keep']} old.");
+          if (empty($confirm_delete) || !in_array($confirm_delete, ['all', 'none'])) {
+            $confirm_delete = $this->askDefault("{$file['Key']} is more than {$opts['keep']} old. Delete it? (Y/n/all/none)", 'Y');
+            $confirm_delete = strtolower($confirm_delete);
+          }
+          if (in_array($confirm_delete, ['y', 'all'])) {
+            $result = $s3Client->deleteObject([
+              'Bucket' => $opts['bucket'],
+              'Key' => $file['Key'],
+            ]);
+            $this->say("{$file['Key']} has been deleted.");
+          }
+        }
+      }
+
     } catch (S3Exception $e) {
       $this->say($e->getMessage());
     }
 
-    // @todo implement cleanup s3 dumps older than 15 days
+    // Once successfully uploaded, delete the local backup files.
+    $fs = new Filesystem();
+    $this->title('Cleaning up local backup files');
+    $fs->remove($this->webRoot . '/' . $dumpfile);
+    $fs->remove($this->workDir . '/' . $tarfile);
+    $this->say('Drupal backup completed successfully!');
   }
 }
