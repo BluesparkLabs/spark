@@ -3,6 +3,7 @@
 namespace BluesparkLabs\Spark\Robo;
 
 use Dotenv\Dotenv;
+use Dotenv\Exception\InvalidPathException;
 use Noodlehaus\Config;
 use Noodlehaus\Exception;
 use Noodlehaus\Exception\FileNotFoundException;
@@ -36,8 +37,12 @@ class Tasks extends \Robo\Tasks {
 
     // Load environment variables from `.env` file into `getenv()` for use
     // by other tasks and commands.
-    $dotenv = new Dotenv($this->workDir);
-    $dotenv->load();
+    try {
+      $dotenv = new Dotenv($this->workDir);
+      $dotenv->load();
+    } catch (InvalidPathException $e) {
+      // Silently fail if .env file doesnt exist.
+    }
 
     // Load config file from the project: .spark.yml.
     try {
