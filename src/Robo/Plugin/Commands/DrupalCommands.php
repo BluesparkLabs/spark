@@ -143,8 +143,13 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
     $dumpfile = "{$filename}.sql";
     $tarfile = "{$filename}.tgz";
 
+    // Create a tmp directory.
+    $tmpDirTask = $this->taskTmpDir(__FUNCTION__);
+    $tmpDir = $tmpDirTask->getPath() . '/';
+    $tmpDirTask->run();
+
     $this->title('Executing Drupal backup command');
-    $this->taskSparkExec('drush', ["sql-dump --gzip --result-file={$dumpfile} --structure-tables-list={$opts['truncate']} --skip-tables-list={$opts['skip']}"]);
+    $this->taskSparkExec('drush', ["sql-dump --gzip --result-file={$tmpDir}{$dumpfile} --structure-tables-list={$opts['truncate']} --skip-tables-list={$opts['skip']}"]);
 
     // The above drush command modifies the dumpfile name upon gzipping.
     $dumpfile = $dumpfile . '.gz';
@@ -169,7 +174,7 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
     $tarTask->optionList('exclude', $opts['exclude'], '=');
 
     // Exeution options: gzip, create, verbose, filename
-    $tarTask->option("-zcf", "{$tarfile}", " ");
+    $tarTask->option("-zcf", "{$tmpDir}{$tarfile}", " ");
 
     // Files and directories to include.
     if (empty($opts['files'])) {
@@ -200,7 +205,7 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
       $result = $s3Client->putObject([
         'Bucket'     => $opts['bucket'],
         'Key'        => $application . '/' . $dumpfile,
-        'SourceFile' => $this->webRoot . '/' . $dumpfile,
+        'SourceFile' => $tmpDir . $dumpfile,
       ]);
       $this->say("Database uploaded to: {$result['ObjectURL']}");
 
@@ -210,7 +215,7 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
       $result = $s3Client->putObject([
         'Bucket'     => $opts['bucket'],
         'Key'        => $application . '/' . $tarfile,
-        'SourceFile' => $this->workDir . '/' . $tarfile,
+        'SourceFile' => $tmpDir . $tarfile,
       ]);
       $this->say("Files tarball uploaded to: {$result['ObjectURL']}");
 
@@ -248,10 +253,8 @@ class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
     }
 
     // Once successfully uploaded, delete the local backup files.
-    $fs = new Filesystem();
-    $this->title('Cleaning up local backup files');
-    $fs->remove($this->webRoot . '/' . $dumpfile);
-    $fs->remove($this->workDir . '/' . $tarfile);
+    $this->title('Cleaning up temporary local backup files');
+    $tmpDirTask->complete();
     $this->say('Drupal backup completed successfully!');
   }
 }
