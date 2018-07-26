@@ -106,17 +106,28 @@ class Tasks extends \Robo\Tasks {
 
   protected function containerExists($container) {
     $this->validateConfig();
-    $project = $this->config->get('name');
     $ps = $this->taskDockerComposePs()
       ->file($this->dockerComposeFile)
-      ->projectName($project)
+      ->projectName($this->config->get('name'))
       ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
       ->printOutput(FALSE)
       ->run()
       ->getMessage();
-    $container_name = strtolower($project) . '_' . $container;
-    $regex = '/' . $container_name . '/m';
+    $regex = '/' . $this->getContainerName($container) . '/m';
     return preg_match($regex, $ps);
+  }
+
+  /**
+   * Returns Docker Compose-style container name with project name as prefix.
+   */
+  protected function getContainerName($container) {
+    $this->validateConfig();
+    // Project name is defined in a nice, human-readable style, so lowercase it
+    // first.
+    $project_lowercase = strtolower($this->config->get('name'));
+    // Replace all spaces to match the behavior of Docker Compose. Then finally
+    // append container name.
+    return str_replace(' ', '', $project_lowercase) . '_' . $container;
   }
 
   /**
