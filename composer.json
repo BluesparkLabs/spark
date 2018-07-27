@@ -2,6 +2,7 @@
     "name": "bluesparklabs/spark",
     "description": "✨ Toolkit to develop, test and run Drupal websites.",
     "type": "project",
+    "license": "mit",
     "require": {
         "aws/aws-sdk-php": "^3.62",
         "boedah/robo-drush": "^3.1.1",
