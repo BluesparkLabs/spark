@@ -78,7 +78,7 @@ See the [spark-example-drupal8 project's `composer.json` file](https://github.co
 },
 ```
 
-**3.** Spark has a command, `drupal:files`, to ensure the `files` folder exists with the right permissions, and that there's a `settings.php` file and a `settings.spark.php` which will have Spark-specific configuration, i.e. database connection etc. You may want to add this command to your `scripts` field in your `composer.json`, so that Composer executes it when packages are installed or updated:
+**3.** Spark has a command, `drupal:files`, to ensure the `files` folder exists with the right permissions, and that there's a `settings.php` file and a `settings.spark.php` which currently holds Spark's Docker-specific configuration, i.e. database connection etc. You may want to add this command to your `scripts` field in your `composer.json`, so that Composer executes it when packages are installed or updated:
 
 ```javascript
 "scripts": {
