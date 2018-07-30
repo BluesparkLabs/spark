@@ -1,75 +1,21 @@
-# (Required) Project name.  Should be alpha-numeric, spaces are allowed.
-name: Spark Example
+# For a full reference, please see the `.spark.example.yml` file in the repository's root.
 
-# (Required) Drupal 8 is currently the only platform spark supports.
+name: Spark D8 Example
 platform: drupal8
 
-# Automated testing command options.
-test:
-  init:
-    - /var/www/html/scripts/behat.sh
-  exec:
-    - /opt/drupalextension/bin/behat --config /var/www/html/behat/behat.spark.yml
-
-# (Optional) Command-specific options.  See the complete list of commands with:
-#
-#   $ composer run spark
-#
 command:
   drupal:
     backup:
       options:
-        # (Optional) The number of days to keep backups on Amazon S3. This
-        # config may be excluded, as the default and recommended value is
-        # '15 days' for GDPR compliance. The format of this option should
-        # be parsable by PHP's `strtotime`.
         keep: 15 days
-
-        # (Required) The S3 bucket name.  Note, this value should be accessible
-        # with the AWS credentials specified in the current environment's
-        # `~/.aws/credentials` file or Environment variables. For additional
-        # information, please refer to:
-        #
-        #   * http://bit.ly/aws-php-creds
-        #   * http://bit.ly/aws-creds-file
-        #
-        bucket: bsp-myproject
-
-        # (Optional) The AWS region to connect to. If left blank, the default
-        # value of 'us-east-1' will be used. For a list of available regions,
-        # see http://bit.ly/s3-regions.
+        bucket: bsp-spark-d8-example
         region: us-east-1
-
-        # (Optional) Comma-separated list of database tables whose data should
-        # be ignored when creating the backup. This will be passed through to
-        # the `--structure-tables-list` option of `drush sql-dump`. The values
-        # shown here are the defaults that will be used used internally if this
-        # option is not provided.  Wildcards are supported if the project is
-        # using at least Drush version 8 on your project.
         truncate: cache,cache_*,sessions,watchdog
-
-        # (Optional) Comma-separated list of database tables to complete ignore
-        #  when creating the backup.  This will be passed through to the
-        # `--skip-tables-list` option of `drush sql-dump`. The default value is
-        # the empty string.  Wildcards are supported if the project is using
-        # at least Drush version 8 on your project.
-        skip: migrate_*
-
-        # This is the list of folders and/or files to include when creating
-        # the backup tarball.  Any paths listed here should be relative to
-        # the project's root directory, from where the tarball will be created.
         files:
           - web/sites/default/files
           - private
-
-        # Specific folder/filename patterns to exclude from the tarball.
-        # These values will be passed directly to the `tar` command's
-        # `--exclude` option.
         exclude:
           - css
           - js
           - styles
-          - xmlsitemap
-          - backup_migrate
-          - ctools
           - php
