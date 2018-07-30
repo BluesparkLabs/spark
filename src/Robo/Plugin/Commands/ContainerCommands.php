@@ -20,6 +20,11 @@ class ContainerCommands extends \BluesparkLabs\Spark\Robo\Tasks {
    *   Container name, when not provided all containers are started.
    */
   public function containersStart($container = NULL) {
+    if ($this->getSparkMode() == 'no-containers') {
+      $this->io()->error('You are running spark in `no-containers` mode.');
+      $this->io()->note('Please set SPARK_MODE in your .env file. Documentation: https://github.com/BluesparkLabs/spark#environment-modes');
+      return;
+    }
     $this->validateConfig();
     $this->title('Starting containers');
     $command = $this->taskDockerComposeUp();
