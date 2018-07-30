@@ -7,15 +7,4 @@ command:
   drupal:
     backup:
       options:
-        keep: 15 days
-        bucket: bsp-spark-d8-example
-        region: us-east-1
-        truncate: cache,cache_*,sessions,watchdog
-        files:
-          - web/sites/default/files
-          - private
-        exclude:
-          - css
-          - js
-          - styles
-          - php
+        bucket: bsp-spark-example-drupal8
