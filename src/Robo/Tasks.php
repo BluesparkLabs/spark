@@ -88,6 +88,26 @@ class Tasks extends \Robo\Tasks {
     }
   }
 
+  /**
+   * Return desired Spark environment.
+   *
+   * Spark can provide an environment with or without containers for PHP and
+   * the HTTP server. An environment variable named `SPARK_MODE` can be defined
+   * in a `.env` file with the following values:
+   *   * SPARK_MODE="containers"
+   *   * SPARK_MODE="containers--no-php-and-http-server"
+   *   * SPARK_MODE="no-containers"
+   *
+   * If the `.env` file is omitted or the `SPARK_MODE` variable is not set, the
+   * fallback value will be `"no-containers"`.
+   */
+  protected function getSparkMode() {
+    if ($mode = getenv('SPARK_MODE')) {
+      return $mode;
+    }
+    return 'no-containers';
+  }
+
   protected function taskSparkExec($command, $args = []) {
     // Wrap all arguments in double quotes.
     foreach ($args as &$arg) {
