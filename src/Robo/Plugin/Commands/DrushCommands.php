@@ -11,7 +11,7 @@ class DrushCommands extends \BluesparkLabs\Spark\Robo\Tasks {
   private $commandBase;
 
   private function prepare() {
-    $this->isContainer = $this->containerExists('php');
+    $this->isContainer = ($this->getSparkMode() == 'containers');
     if ($this->isContainer) {
       $this->drush = '../vendor/bin/drush';
       $this->webRoot = '.';
