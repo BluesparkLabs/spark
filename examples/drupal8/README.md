@@ -13,8 +13,8 @@ Getting this example site up and running
 
         $ composer run spark containers:start
 
-2. Install Drupal:
+2. Install Drupal when the database container is ready:
 
-        $ composer run spark drupal:install
+        $ composer run spark db:check-ready && composer run spark drupal:install
 
 3. Visit http://localhost:7500 in your brower. (Username and password is *admin/admin*.)
