@@ -1,0 +1,10 @@
+# For a full reference, please see the `.spark.example.yml` file in the repository's root.
+
+name: Spark D8 Example
+platform: drupal8
+
+command:
+  drupal:
+    backup:
+      options:
+        bucket: bsp-spark-example-drupal8

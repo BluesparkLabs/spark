@@ -1,0 +1,37 @@
+{
+    "name": "bluesparklabs/spark-example-drupal8",
+    "description": "Example Drupal 8 project built with `bluesparklabs/spark`.",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "BluesparkLabs\\Spark\\": "./vendor/bluesparklabs/spark/src/"
+        }
+    },
+    "require": {
+        "bluesparklabs/spark": "^0.1.1",
+        "composer/installers": "^1.5",
+        "drupal/core": "8.*",
+        "drupal-composer/drupal-scaffold": "^2.5"
+    },
+    "scripts": {
+        "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
+        "post-install-cmd": "composer run spark drupal:files",
+        "post-update-cmd": "composer run spark drupal:files",
+        "spark": "SPARK_WORKDIR=`pwd` robo --ansi --load-from vendor/bluesparklabs/spark"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "installer-paths": {
+            "web/core": ["type:drupal-core"],
+            "web/libraries/{$name}": ["type:drupal-library"],
+            "web/modules/contrib/{$name}": ["type:drupal-module"],
+            "web/profiles/contrib/{$name}": ["type:drupal-profile"],
+            "web/themes/contrib/{$name}": ["type:drupal-theme"],
+            "drush/contrib/{$name}": ["type:drupal-drush"]
+        }
+    }
+}
