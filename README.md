@@ -21,7 +21,7 @@ The project is at an early stage, some directions are still definitely being sha
 
 ## Getting Started — How to Sparkify your Drupal project
 
-Check out the example project: [spark-example-drupal8](https://github.com/BluesparkLabs/spark-example-drupal8).
+Check out the [Drupal 8 example project](https://github.com/BluesparkLabs/spark/tree/master/examples/drupal8).
 
 Here are the main steps outlined.
 
@@ -49,11 +49,11 @@ Here are the main steps outlined.
 
 **4. Create a file named `.spark.yml` in your project's root.** This will be your project-specific configuration that Spark will use.
 
-To learn about how to write your configuration, please refer to the [spark-example-drupal8 project's `.spark.yml` file](https://github.com/BluesparkLabs/spark-example-drupal8/blob/master/.spark.yml).
+To learn about how to write your configuration, please refer to our [`.spark.example.yml` file](https://github.com/BluesparkLabs/spark/blob/master/.spark.example.yml).
 
 ### Recommended `composer.json` bits
 
-See the [spark-example-drupal8 project's `composer.json` file](https://github.com/BluesparkLabs/spark-example-drupal8/blob/master/composer.json).
+See the [Drupal 8 example project's `composer.json` file](https://github.com/BluesparkLabs/spark/blob/master/examples/drupal8/composer.json).
 
 **1.** Composer by default installs all packages under a directory called `./vendor`. **Use [`composer/installers`](https://packagist.org/packages/composer/installers) to define installation destinations** for Drupal modules, themes etc. Example configuration in `composer.json`:
 
