@@ -9,12 +9,18 @@ Getting this example site up and running
         $ cd examples/drupal8
         $ composer install
 
-2. Start Spark's containers:
+2. Create a file named .env and add the following content:
+
+        SPARK_MODE="containers"
+
+See more in the chapter about [Environment modes in Spark's readme](https://github.com/BluesparkLabs/spark#environment-modes).
+
+3. Start Spark's containers:
 
         $ composer run spark containers:start
 
-2. Install Drupal when the database container is ready:
+4. Install Drupal when the database container is ready:
 
         $ composer run spark db:check-ready && composer run spark drupal:install
 
-3. Visit http://localhost:7500 in your brower. (Username and password is *admin/admin*.)
+5. Visit http://localhost:7500 in your brower. (Username and password is *admin/admin*.)

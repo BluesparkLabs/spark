@@ -2,6 +2,13 @@
 
 Toolkit to develop, test and run Drupal websites.
 
+- [Motivation, goals](#motivation-goals)
+- [Roadmap](#roadmap)
+- [Getting Started—How to Sparkify your Drupal project](#getting-started--how-to-sparkify-your-drupal-project)
+    - [Environment modes](#environment-modes)
+    - [Recommended `composer.json` bits](#recommended-composerjson-bits)
+- [Usage](#usage)
+
 ## Motivation, goals
 
 The developer team at [Bluespark](https://www.bluespark.com) have been discussing the need of a standardized local environment for a long time. We've tried a few directions over the past year or so, including an experiment with [Habitat](https://www.habitat.sh) or just relying on Docker Compose-centric solutions (i.e. [isholgueras/docker-lamp](https://github.com/isholgueras/docker-lamp) or [wodby/docker4drupal](https://github.com/wodby/docker4drupal)). The latter turned out to be a great approach, however, we had only used it as a starting point, so its maintenance across projects became challenging. Along the way we also started adding utility functions to our various wrapper scripts, so the need for organizing those in an upstream repository became clear.
@@ -19,7 +26,7 @@ The project is at an early stage, some directions are still definitely being sha
 * We're currently evaluating whether we can/should replace the environment handling and rely on [Lando](https://docs.devwithlando.io): [#4](https://github.com/BluesparkLabs/spark/issues/4);
 * There is a discussion about the viability of turning Spark into a global dependency, as opposed to requiring it on the project-level: [#5](https://github.com/BluesparkLabs/spark/issues/5).
 
-## Getting Started — How to Sparkify your Drupal project
+## Getting Started—How to Sparkify your Drupal project
 
 Check out the [Drupal 8 example project](https://github.com/BluesparkLabs/spark/tree/master/examples/drupal8).
 
@@ -50,6 +57,20 @@ Here are the main steps outlined.
 **4. Create a file named `.spark.yml` in your project's root.** This will be your project-specific configuration that Spark will use.
 
 To learn about how to write your configuration, please refer to our [`.spark.example.yml` file](https://github.com/BluesparkLabs/spark/blob/master/.spark.example.yml).
+
+**5. Create a file named `.env` in your project's root.** This will be your environment-specific configuration that Spark will use. Don't commit this file to your repository, it is meant to hold values that are not supposed to transfer between environments. Set a variable named `SPARK_MODE` inside the file. See more in the chapter about [Environment modes](#environment-modes).
+
+### Environment modes
+
+Spark can provide an environment with or without containers for PHP and the HTTP server. Our intent with that is to provide a sane—though not ideal—development environment on macOS. Those who are lucky enough to enjoy Docker on Linux can run the whole environment in containers, but developers on macOS are encouraged to set up their own PHP with a web server and leave only the rest (database, Solr etc. to Spark). (Our recommendation is to use Apache that ships with macOS and install PHP packages from https://php-osx.liip.ch.)
+
+To configure your environment mode, **create a file named `.env`** in your project's root and **set a variable named `SPARK_MODE`** to one of the following values:
+
+* `containers`
+* `containers--no-php-and-http-server`
+* `no-containers`
+
+When no containers are used, Spark will assume that PHP and the HTTP server runs locally, and your application takes care of connecting to other services, i.e. the database. `no-containers` is the fallback value when the `.env` file or the `SPARK_MODE` variable is missing.
 
 ### Recommended `composer.json` bits
 
