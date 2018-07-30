@@ -1,0 +1,34 @@
+version: '2.1'
+
+services:
+
+  db:
+    build: ./db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: spark
+      MYSQL_USER: spark
+      MYSQL_PASSWORD: spark
+    healthcheck:
+      test: "mysqladmin -uroot -proot ping --silent"
+    volumes:
+      - "${SPARK_WORKDIR}:/opt/spark-project"
+    ports:
+      - "7501:3306"
+
+  solr:
+    build: ./solr
+    environment:
+      SOLR_HEAP: 1024m
+    volumes:
+      - "${SPARK_WORKDIR}:/opt/spark-project"
+    ports:
+      - "7502:8983"
+
+  chrome:
+    build: ./chrome
+    shm_size: '1gb'
+    ports:
+      - '9222:9222'
+    cap_add:
+      - SYS_ADMIN

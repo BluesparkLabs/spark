@@ -58,6 +58,9 @@ class Tasks extends \Robo\Tasks {
       throw new \Exception('Missing configuration file: ' . Tasks::CONFIG_FILE_NAME);
     }
     $this->dockerComposeFile = './docker/docker-compose.' . $this->config->get('platform') . '.yml';
+    if ($this->getSparkMode() == 'containers--no-php-and-http-server') {
+      $this->dockerComposeFile = './docker/docker-compose.' . $this->config->get('platform') . '--no-php-and-http-server.yml';
+    }
     $this->roboExecutable = $this->workDir . '/vendor/bin/robo';
 
     $this->webRoot = $this->workDir . '/web';
