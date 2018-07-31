@@ -3,6 +3,7 @@
     "description": "✨ Toolkit to develop, test and run Drupal websites.",
     "type": "project",
     "license": "mit",
+    "minimum-stability": "dev",
     "require": {
         "aws/aws-sdk-php": "^3.62",
         "boedah/robo-drush": "^3.1.1",
@@ -10,6 +11,7 @@
         "droath/robo-docker-compose": "^0.0.8",
         "drush/drush": "~8",
         "hassankhan/config": "^1.0.0",
+        "machbarmacher/gdpr-dump": "dev-master",
         "respect/validation": "^1.1.15",
         "vlucas/phpdotenv": "^2.5"
     }
