@@ -4,12 +4,16 @@
     "type": "project",
     "license": "mit",
     "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    },
     "require": {
         "aws/aws-sdk-php": "^3.62",
         "boedah/robo-drush": "^3.1.1",
         "consolidation/robo": "^1.2.2",
         "droath/robo-docker-compose": "^0.0.8",
-        "drush/drush": "~8",
+        "drush/drush": "^9.3",
         "hassankhan/config": "^1.0.0",
         "balintk/gdpr-dump": "dev-master",
         "respect/validation": "^1.1.15",
