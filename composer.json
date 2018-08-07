@@ -11,7 +11,7 @@
         "droath/robo-docker-compose": "^0.0.8",
         "drush/drush": "~8",
         "hassankhan/config": "^1.0.0",
-        "machbarmacher/gdpr-dump": "dev-master",
+        "balintk/gdpr-dump": "dev-master",
         "respect/validation": "^1.1.15",
         "vlucas/phpdotenv": "^2.5"
     }
