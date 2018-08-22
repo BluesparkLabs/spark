@@ -15,8 +15,10 @@ use Robo\Robo;
 class Tasks extends \Robo\Tasks {
 
   const CONFIG_FILE_NAME = '.spark.yml';
+  const CONFIG_LOCAL_FILE_NAME = '.spark.local.yml';
 
   protected $config;
+  protected $config_local;
   protected $workDir;
   protected $webRoot;
   protected $dockerComposeFile;
@@ -57,6 +59,13 @@ class Tasks extends \Robo\Tasks {
     catch (FileNotFoundException $exception) {
       throw new \Exception('Missing configuration file: ' . Tasks::CONFIG_FILE_NAME);
     }
+
+    // Load local config file if exists: .spark.local.yml.
+    $spark_config_local = $this->workDir . '/' . Tasks::CONFIG_LOCAL_FILE_NAME;
+    if (file_exists($spark_config_local)) {
+      $this->config_local = Config::load($spark_config_local);
+    }
+
     $this->dockerComposeFile = './docker/docker-compose.' . $this->config->get('platform') . '.yml';
     $this->roboExecutable = $this->workDir . '/vendor/bin/robo';
 
@@ -83,7 +92,29 @@ class Tasks extends \Robo\Tasks {
     catch (NestedValidationException $exception) {
       $this->yell('There are problems with your .spark.yml file.', 40, 'red');
       $this->io()->error($exception->getMessages());
-      $this->io()->note('📖 Documentation: https://github.com/BluesparkLabs/spark/wiki/Configuration');
+      $this->io()->note('📖  Documentation: https://github.com/BluesparkLabs/spark');
+      throw new Exception('Invalid configuration for Spark.');
+    }
+
+    // Validate .spark.local.yml if it exists.
+    if (!$this->config_local) {
+      return;
+    }
+
+    try {
+      if ($this->config_local->has('database')) {
+        v::key('host', v::oneOf(v::stringType()->noWhitespace(), v::ip()))
+          ->key('port', v::intVal())
+          ->key('dbname', v::stringType()->length(1,64))
+          ->key('user', v::stringType()->length(1,32))
+          ->key('password', v::stringType()->length(1,64))
+          ->assert($this->config_local->get('database'));
+      }
+    }
+    catch (NestedValidationException $exception) {
+      $this->yell('There are problems with your .spark.local.yml file.', 40, 'red');
+      $this->io()->error($exception->getMessages());
+      $this->io()->note('📖  Documentation: https://github.com/BluesparkLabs/spark');
       throw new Exception('Invalid configuration for Spark.');
     }
   }
