@@ -2,8 +2,6 @@
 
 namespace BluesparkLabs\Spark\Robo\Plugin\Commands;
 
-use Ifsnop\Mysqldump as MySqlDump;
-
 class MySqlCommands extends \BluesparkLabs\Spark\Robo\Commands {
 
   private $database;
@@ -28,43 +26,13 @@ class MySqlCommands extends \BluesparkLabs\Spark\Robo\Commands {
 
   public function mysqlDump() {
     $this->validateConfig();
-    $this->validateMySqlConnection();
-    try {
-      $dump = new MySqlDump\Mysqldump($this->getDsn(), $this->database['user'], $this->database['password']);
-      $dump->start('dump.sql');
-    }
-    catch (\Exception $e) {
-      $this->io()->error($e->getMessage());
-    }
-  }
-
-  private function validateMySqlConnection() {
-    try {
-      $dbh = new \PDO($this->getDsn(), $this->database['user'], $this->database['password']);
-      $dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-    }
-    catch (\PDOException $e){
-      $this->io()->error('Connection to MySQL failed: ' . $e->getMessage());
-      $notes = [];
-      if ($this->config_local && $this->config_local->has('database')) {
-        $notes[] = 'Check the database connection details you provided in your .spark.local.yml file.';
-      }
-      else {
-        $notes[] = 'Spark attempted to use its own MySQL container. Make sure you start it with the `containers:start` command.';
-        $notes[] = 'If you wish to connect to a different database, please provide database connection details in your .spark.local.yml file.';
-      }
-      $notes[] = '📖  Documentation: https://github.com/BluesparkLabs/spark';
-      $this->io()->note($notes);
-      die(1);
-    }
-  }
-
-  private function getDsn() {
-    return sprintf('mysql:host=%s;port=%d;dbname=%s',
-      $this->database['host'],
-      $this->database['port'],
-      $this->database['dbname']
-    );
+    $this->taskMySqlDump()
+      ->host($this->database['host'])
+      ->port($this->database['port'])
+      ->dbname($this->database['dbname'])
+      ->user($this->database['user'])
+      ->password($this->database['password'])
+      ->run();
   }
 
 }

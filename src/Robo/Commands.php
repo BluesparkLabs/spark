@@ -2,6 +2,7 @@
 
 namespace BluesparkLabs\Spark\Robo;
 
+use BluesparkLabs\Spark\Robo\loadTasks;
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 use Noodlehaus\Config;
@@ -13,6 +14,8 @@ use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Robo;
 
 class Commands extends \Robo\Tasks {
+
+  use loadTasks;
 
   const CONFIG_FILE_NAME = '.spark.yml';
   const CONFIG_LOCAL_FILE_NAME = '.spark.local.yml';
