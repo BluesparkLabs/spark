@@ -9,6 +9,7 @@
         "consolidation/robo": "^1.2.2",
         "droath/robo-docker-compose": "^0.0.8",
         "drush/drush": "~8",
+        "fzaninotto/faker": "^1.8.0",
         "hassankhan/config": "^1.0.0",
         "ifsnop/mysqldump-php": "dev-master",
         "respect/validation": "^1.1.15",
