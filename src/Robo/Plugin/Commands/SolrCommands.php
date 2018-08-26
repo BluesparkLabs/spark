@@ -2,7 +2,7 @@
 
 namespace BluesparkLabs\Spark\Robo\Plugin\Commands;
 
-class SolrCommands extends \BluesparkLabs\Spark\Robo\Tasks {
+class SolrCommands extends \BluesparkLabs\Spark\Robo\Commands {
 
   public function solrCheckReady() {
     $this->title('Waiting for Solr to start');

@@ -5,7 +5,7 @@ namespace BluesparkLabs\Spark\Robo\Plugin\Commands;
 use Robo\Contract\CommandInterface;
 use Robo\Contract\VerbosityThresholdInterface;
 
-class ContainerCommands extends \BluesparkLabs\Spark\Robo\Tasks {
+class ContainerCommands extends \BluesparkLabs\Spark\Robo\Commands {
 
   use \Droath\RoboDockerCompose\Task\loadTasks;
 

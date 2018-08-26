@@ -2,7 +2,7 @@
 
 namespace BluesparkLabs\Spark\Robo\Plugin\Commands;
 
-class TestCommands extends \BluesparkLabs\Spark\Robo\Tasks {
+class TestCommands extends \BluesparkLabs\Spark\Robo\Commands {
 
   public function testInit() {
     $this->validateConfig();

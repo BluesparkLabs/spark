@@ -2,7 +2,7 @@
 
 namespace BluesparkLabs\Spark\Robo\Plugin\Commands;
 
-class DbCommands extends \BluesparkLabs\Spark\Robo\Tasks {
+class DbCommands extends \BluesparkLabs\Spark\Robo\Commands {
 
   public function dbCheckReady() {
     $this->title('Waiting for MariaDB to start');

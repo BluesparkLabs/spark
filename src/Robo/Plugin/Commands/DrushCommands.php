@@ -2,7 +2,7 @@
 
 namespace BluesparkLabs\Spark\Robo\Plugin\Commands;
 
-class DrushCommands extends \BluesparkLabs\Spark\Robo\Tasks {
+class DrushCommands extends \BluesparkLabs\Spark\Robo\Commands {
 
   use \Droath\RoboDockerCompose\Task\loadTasks;
 

@@ -4,7 +4,7 @@ namespace BluesparkLabs\Spark\Robo\Plugin\Commands;
 
 use Ifsnop\Mysqldump as MySqlDump;
 
-class MySqlCommands extends \BluesparkLabs\Spark\Robo\Tasks {
+class MySqlCommands extends \BluesparkLabs\Spark\Robo\Commands {
 
   private $database;
 

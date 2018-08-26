@@ -12,7 +12,7 @@ use Respect\Validation\Validator as v;
 use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Robo;
 
-class Tasks extends \Robo\Tasks {
+class Commands extends \Robo\Tasks {
 
   const CONFIG_FILE_NAME = '.spark.yml';
   const CONFIG_LOCAL_FILE_NAME = '.spark.local.yml';
@@ -48,7 +48,7 @@ class Tasks extends \Robo\Tasks {
 
     // Load config file from the project: .spark.yml.
     try {
-      $spark_config = $this->workDir . '/' . Tasks::CONFIG_FILE_NAME;
+      $spark_config = $this->workDir . '/' . Commands::CONFIG_FILE_NAME;
       $this->config = Config::load($spark_config);
 
       // The spark config file may also contain default options for Robo
@@ -57,11 +57,11 @@ class Tasks extends \Robo\Tasks {
       Robo::loadConfiguration([$spark_config]);
     }
     catch (FileNotFoundException $exception) {
-      throw new \Exception('Missing configuration file: ' . Tasks::CONFIG_FILE_NAME);
+      throw new \Exception('Missing configuration file: ' . Commands::CONFIG_FILE_NAME);
     }
 
     // Load local config file if exists: .spark.local.yml.
-    $spark_config_local = $this->workDir . '/' . Tasks::CONFIG_LOCAL_FILE_NAME;
+    $spark_config_local = $this->workDir . '/' . Commands::CONFIG_LOCAL_FILE_NAME;
     if (file_exists($spark_config_local)) {
       $this->config_local = Config::load($spark_config_local);
     }
