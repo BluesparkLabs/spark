@@ -26,13 +26,19 @@ class MySqlCommands extends \BluesparkLabs\Spark\Robo\Commands {
 
   public function mysqlDump() {
     $this->validateConfig();
-    $this->taskMySqlDump()
+    $task = $this->taskMySqlDump()
       ->host($this->database['host'])
       ->port($this->database['port'])
       ->dbname($this->database['dbname'])
       ->user($this->database['user'])
-      ->password($this->database['password'])
-      ->run();
+      ->password($this->database['password']);
+    if ($this->config->has('database-sanitization')) {
+      $task->sanitize($this->config->get('database-sanitization.rules'));
+      if ($this->config->has('database-sanitization.faker-locale')) {
+        $task->fakerLocale($this->config->get('database-sanitization.faker-locale'));
+      }
+    }
+    $task->run();
   }
 
 }

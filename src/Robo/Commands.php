@@ -91,6 +91,15 @@ class Commands extends \Robo\Tasks {
       v::key('name', v::stringType()->length(1,32))
         ->key('platform', v::in(['drupal8']))
         ->assert($this->config->all());
+
+      if ($this->config->has('database-sanitization')) {
+        v::key('rules', v::arrayType())
+          ->assert($this->config->get('database-sanitization'));
+
+        if ($this->config->has('database-sanitization.faker-locale')) {
+          v::alpha('_')->noWhitespace()->assert($this->config->get('database-sanitization.faker-locale'));
+        }
+      }
     }
     catch (NestedValidationException $exception) {
       $this->yell('There are problems with your .spark.yml file.', 40, 'red');

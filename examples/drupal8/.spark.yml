@@ -3,6 +3,13 @@
 name: Spark D8 Example
 platform: drupal8
 
+database-sanitization:
+  faker-locale: fr_FR
+  rules:
+    users_field_data:
+      name: userName
+      mail: email
+
 command:
   drupal:
     backup:
