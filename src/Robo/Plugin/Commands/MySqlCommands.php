@@ -24,7 +24,7 @@ class MySqlCommands extends \BluesparkLabs\Spark\Robo\Commands {
     }
   }
 
-  public function mysqlDump() {
+  public function mysqlDump($opts = ['non-sanitized' => false]) {
     $this->validateConfig();
     $task = $this->taskMySqlDump()
       ->host($this->database['host'])
@@ -32,7 +32,7 @@ class MySqlCommands extends \BluesparkLabs\Spark\Robo\Commands {
       ->dbname($this->database['dbname'])
       ->user($this->database['user'])
       ->password($this->database['password']);
-    if ($this->config->has('database-sanitization')) {
+    if (!$opts['non-sanitized'] && $this->config->has('database-sanitization')) {
       $task->sanitize($this->config->get('database-sanitization.rules'));
       if ($this->config->has('database-sanitization.faker-locale')) {
         $task->fakerLocale($this->config->get('database-sanitization.faker-locale'));

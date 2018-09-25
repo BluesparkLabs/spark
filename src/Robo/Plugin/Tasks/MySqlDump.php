@@ -74,6 +74,9 @@ class MySqlDump extends BaseTask {
           return $this->sanitizeValues($tableName, $colName, $colValue);
         });
       }
+      else {
+        $this->printTaskWarning('⚠️  Skipping data sanitization.');
+      }
       $dump->start('dump.sql');
       $this->stopTimer();
       $message = 'Created file dump.sql';
