@@ -24,7 +24,7 @@ class MySqlCommands extends \BluesparkLabs\Spark\Robo\Commands {
     }
   }
 
-  public function mysqlDump($opts = ['non-sanitized' => false]) {
+  public function mysqlDump($opts = ['non-sanitized' => false, 'destination' => '']) {
     $this->validateConfig();
     $task = $this->taskMySqlDump()
       ->host($this->database['host'])
@@ -42,6 +42,7 @@ class MySqlCommands extends \BluesparkLabs\Spark\Robo\Commands {
     if ($this->config_local->has('environment-name')) {
       $task->environmentName($this->config_local->get('environment-name'));
     }
+    $task->destination($opts['destination']);
     $task->run();
   }
 

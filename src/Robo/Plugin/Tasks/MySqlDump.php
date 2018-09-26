@@ -7,6 +7,7 @@ use Faker\Factory as FakerFactory;
 use Ifsnop\Mysqldump as IMySqlDump;
 use Robo\Task\BaseTask;
 use Robo\Result;
+use Webmozart\PathUtil\Path;
 
 class MySqlDump extends BaseTask {
 
@@ -20,6 +21,7 @@ class MySqlDump extends BaseTask {
   protected $faker;
   protected $projectName = '';
   protected $environmentName = '';
+  protected $destination = '';
 
   public function host($host) {
     $this->host = $host;
@@ -64,6 +66,10 @@ class MySqlDump extends BaseTask {
     $this->environmentName = $environmentName;
   }
 
+  public function destination($destination) {
+    $this->destination = $destination;
+  }
+
   public function run() {
     $this->startTimer();
     if (!$this->validateMySqlConnection()) {
@@ -91,9 +97,11 @@ class MySqlDump extends BaseTask {
         $this->printTaskWarning('⚠️  Skipping data sanitization.');
       }
       $filename = $this->filename();
-      $dump->start($filename);
+      $destinationDirectory = $this->destinationDirectory();
+      $this->printTaskInfo('Destination directory: {destination}', ['destination' => $destinationDirectory]);
+      $dump->start($destinationDirectory . '/' . $filename);
       $this->stopTimer();
-      $message = 'Created file {filename}';
+      $message = 'Created file: {filename}';
       $this->printTaskSuccess($message, ['filename' => $filename]);
       $result = Result::success($this, $message, ['time' => $this->getExecutionTime(), 'filename' => $filename]);
     }
@@ -111,6 +119,17 @@ class MySqlDump extends BaseTask {
       // Date: UTC, ISO 8601 standard.
       gmdate('Y-m-d\THi\Z', time())
     );
+  }
+
+  protected function destinationDirectory() {
+    if (!$this->destination) {
+      return getenv('SPARK_WORKDIR');
+    }
+    $destination = rtrim($this->destination);
+    if (strpos($this->destination, '/') === 0) {
+      return $destination;
+    }
+    return Path::canonicalize(getenv('SPARK_WORKDIR') . '/' . $destination);
   }
 
   protected function sanitizeValues($tableName, $colName, $colValue) {

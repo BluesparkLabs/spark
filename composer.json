@@ -19,6 +19,7 @@
         "hassankhan/config": "^1.0.0",
         "ifsnop/mysqldump-php": "dev-master",
         "respect/validation": "^1.1.15",
-        "vlucas/phpdotenv": "^2.5"
+        "vlucas/phpdotenv": "^2.5",
+        "webmozart/path-util": "^2.3"
     }
 }
