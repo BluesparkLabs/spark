@@ -77,7 +77,9 @@ class MySqlDump extends BaseTask {
       'password' => $this->password ? 'yes' : 'no',
     ]);
     try {
-      $dump = new IMysqldump\Mysqldump($this->getDsn(), $this->user, $this->password);
+      $dump = new IMysqldump\Mysqldump($this->getDsn(), $this->user, $this->password, [
+        'compress' => IMysqldump\Mysqldump::GZIP,
+      ]);
       if (!empty($this->sanitizations)) {
         $this->printTaskInfo('Sanitizing values using Faker ({locale})', ['locale' => $this->fakerLocale]);
         $this->faker = FakerFactory::create($this->fakerLocale);
@@ -103,7 +105,7 @@ class MySqlDump extends BaseTask {
 
   protected function filename() {
     $slugify = new Slugify();
-    return sprintf('%s%s--db--%s.sql',
+    return sprintf('%s%s--db--%s.sql.gz',
       $slugify->slugify($this->projectName),
       $this->environmentName ? ('--' . $slugify->slugify($this->environmentName)) : '',
       // Date: UTC, ISO 8601 standard.
