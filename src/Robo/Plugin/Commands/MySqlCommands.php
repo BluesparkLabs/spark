@@ -32,10 +32,10 @@ class MySqlCommands extends \BluesparkLabs\Spark\Robo\Commands {
       ->dbname($this->database['dbname'])
       ->user($this->database['user'])
       ->password($this->database['password']);
-    if (!$opts['non-sanitized'] && $this->config->has('database-sanitization')) {
-      $task->sanitize($this->config->get('database-sanitization.rules'));
-      if ($this->config->has('database-sanitization.faker-locale')) {
-        $task->fakerLocale($this->config->get('database-sanitization.faker-locale'));
+    if (!$opts['non-sanitized'] && $this->config->has('database-export.sanitization')) {
+      $task->sanitize($this->config->get('database-export.sanitization.rules'));
+      if ($this->config->has('database-export.sanitization.faker-locale')) {
+        $task->fakerLocale($this->config->get('database-export.sanitization.faker-locale'));
       }
     }
     $task->projectName($this->config->get('name'));
@@ -43,6 +43,12 @@ class MySqlCommands extends \BluesparkLabs\Spark\Robo\Commands {
       $task->environmentName($this->config_local->get('environment-name'));
     }
     $task->destination($opts['destination']);
+    if ($this->config->has('database-export.exclude-tables')) {
+      $task->excludeTables($this->config->get('database-export.exclude-tables'));
+    }
+    if ($this->config->has('database-export.no-data')) {
+      $task->noData($this->config->get('database-export.no-data'));
+    }
     $task->run();
   }
 

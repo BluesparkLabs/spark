@@ -92,13 +92,19 @@ class Commands extends \Robo\Tasks {
         ->key('platform', v::in(['drupal8']))
         ->assert($this->config->all());
 
-      if ($this->config->has('database-sanitization')) {
+      if ($this->config->has('database-export.sanitization')) {
         v::key('rules', v::arrayType())
-          ->assert($this->config->get('database-sanitization'));
+          ->assert($this->config->get('database-export.sanitization'));
 
-        if ($this->config->has('database-sanitization.faker-locale')) {
-          v::alpha('_')->noWhitespace()->assert($this->config->get('database-sanitization.faker-locale'));
+        if ($this->config->has('database-export.sanitization.faker-locale')) {
+          v::alpha('_')->noWhitespace()->assert($this->config->get('database-export.sanitization.faker-locale'));
         }
+      }
+      if ($this->config->has('database-export.exclude-tables')) {
+        v::arrayType()->assert($this->config->get('database-export.exclude-tables'));
+      }
+      if ($this->config->has('database-export.no-data')) {
+        v::arrayType()->assert($this->config->get('database-export.no-data'));
       }
     }
     catch (NestedValidationException $exception) {

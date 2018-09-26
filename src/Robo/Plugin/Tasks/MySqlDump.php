@@ -22,6 +22,8 @@ class MySqlDump extends BaseTask {
   protected $projectName = '';
   protected $environmentName = '';
   protected $destination = '';
+  protected $excludeTables = [];
+  protected $noData = [];
 
   public function host($host) {
     $this->host = $host;
@@ -70,6 +72,14 @@ class MySqlDump extends BaseTask {
     $this->destination = $destination;
   }
 
+  public function excludeTables($excludeTables) {
+    $this->excludeTables = $excludeTables;
+  }
+
+  public function noData($noData) {
+    $this->noData = $noData;
+  }
+
   public function run() {
     $this->startTimer();
     if (!$this->validateMySqlConnection()) {
@@ -85,6 +95,8 @@ class MySqlDump extends BaseTask {
     try {
       $dump = new IMysqldump\Mysqldump($this->getDsn(), $this->user, $this->password, [
         'compress' => IMysqldump\Mysqldump::GZIP,
+        'exclude-tables' => $this->excludeTables,
+        'no-data' => $this->noData,
       ]);
       if (!empty($this->sanitizations)) {
         $this->printTaskInfo('Sanitizing values using Faker ({locale})', ['locale' => $this->fakerLocale]);
@@ -95,6 +107,12 @@ class MySqlDump extends BaseTask {
       }
       else {
         $this->printTaskWarning('⚠️  Skipping data sanitization.');
+      }
+      if ($this->excludeTables) {
+        $this->printTaskInfo('Excluding tables {tables}', ['tables' => implode(', ', $this->excludeTables)]);
+      }
+      if ($this->noData) {
+        $this->printTaskInfo('Discarding data from {tables}', ['tables' => implode(', ', $this->noData)]);
       }
       $filename = $this->filename();
       $destinationDirectory = $this->destinationDirectory();
