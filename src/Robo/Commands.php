@@ -114,13 +114,13 @@ class Commands extends \Robo\Tasks {
     }
 
     try {
-      if ($this->config_local->has('database')) {
+      if ($this->config_local->has('services.mysql.connection')) {
         v::key('host', v::oneOf(v::stringType()->noWhitespace(), v::ip()))
           ->key('port', v::intVal())
           ->key('dbname', v::stringType()->length(1,64))
           ->key('user', v::stringType()->length(1,32))
           ->key('password', v::stringType()->length(1,64))
-          ->assert($this->config_local->get('database'));
+          ->assert($this->config_local->get('services.mysql.connection'));
       }
 
       if ($this->config_local->has('environment-name')) {

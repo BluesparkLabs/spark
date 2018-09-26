@@ -9,8 +9,8 @@ class MySqlCommands extends \BluesparkLabs\Spark\Robo\Commands {
   public function __construct() {
     parent::__construct();
     // Try to use database connection credentials from .spark.local.yml.
-    if ($this->config_local && $this->config_local->has('database')) {
-      $this->database = $this->config_local->get('database');
+    if ($this->config_local && $this->config_local->has('services.mysql.connection')) {
+      $this->database = $this->config_local->get('services.mysql.connection');
     }
     // Fall back to values that work with the MySQL container Spark provides.
     else {
