@@ -38,6 +38,10 @@ class MySqlCommands extends \BluesparkLabs\Spark\Robo\Commands {
         $task->fakerLocale($this->config->get('database-sanitization.faker-locale'));
       }
     }
+    $task->projectName($this->config->get('name'));
+    if ($this->config_local->has('environment-name')) {
+      $task->environmentName($this->config_local->get('environment-name'));
+    }
     $task->run();
   }
 

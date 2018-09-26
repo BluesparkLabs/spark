@@ -122,6 +122,10 @@ class Commands extends \Robo\Tasks {
           ->key('password', v::stringType()->length(1,64))
           ->assert($this->config_local->get('database'));
       }
+
+      if ($this->config_local->has('environment-name')) {
+        v::stringType()->length(1, 32)->assert($this->config_local->get('environment-name'));
+      }
     }
     catch (NestedValidationException $exception) {
       $this->yell('There are problems with your .spark.local.yml file.', 40, 'red');

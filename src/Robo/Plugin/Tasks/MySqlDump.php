@@ -2,6 +2,7 @@
 
 namespace BluesparkLabs\Spark\Robo\Plugin\Tasks;
 
+use Cocur\Slugify\Slugify;
 use Faker\Factory as FakerFactory;
 use Ifsnop\Mysqldump as IMySqlDump;
 use Robo\Task\BaseTask;
@@ -17,6 +18,8 @@ class MySqlDump extends BaseTask {
   protected $sanitizations = [];
   protected $fakerLocale = 'en_US';
   protected $faker;
+  protected $projectName = '';
+  protected $environmentName = '';
 
   public function host($host) {
     $this->host = $host;
@@ -53,6 +56,14 @@ class MySqlDump extends BaseTask {
     return $this;
   }
 
+  public function projectName($projectName) {
+    $this->projectName = $projectName;
+  }
+
+  public function environmentName($environmentName) {
+    $this->environmentName = $environmentName;
+  }
+
   public function run() {
     $this->startTimer();
     if (!$this->validateMySqlConnection()) {
@@ -61,7 +72,7 @@ class MySqlDump extends BaseTask {
     $this->printTaskInfo('Dumping database from {user}{host}:{port}/{dbname} (using password: {password})', [
       'user' => $this->user ? ($this->user . '@') : '',
       'host' => $this->host,
-      'port' => $this->port,
+      'port' => (string) $this->port,
       'dbname' => $this->dbname,
       'password' => $this->password ? 'yes' : 'no',
     ]);
@@ -77,16 +88,27 @@ class MySqlDump extends BaseTask {
       else {
         $this->printTaskWarning('⚠️  Skipping data sanitization.');
       }
-      $dump->start('dump.sql');
+      $filename = $this->filename();
+      $dump->start($filename);
       $this->stopTimer();
-      $message = 'Created file dump.sql';
-      $this->printTaskSuccess($message);
-      $result = Result::success($this, $message, ['time' => $this->getExecutionTime()]);
+      $message = 'Created file {filename}';
+      $this->printTaskSuccess($message, ['filename' => $filename]);
+      $result = Result::success($this, $message, ['time' => $this->getExecutionTime(), 'filename' => $filename]);
     }
     catch (\Exception $e) {
       $result = Result::error($this, $e->getMessage());
     }
     return $result;
+  }
+
+  protected function filename() {
+    $slugify = new Slugify();
+    return sprintf('%s%s--db--%s.sql',
+      $slugify->slugify($this->projectName),
+      $this->environmentName ? ('--' . $slugify->slugify($this->environmentName)) : '',
+      // Date: UTC, ISO 8601 standard.
+      gmdate('Y-m-d\THi\Z', time())
+    );
   }
 
   protected function sanitizeValues($tableName, $colName, $colValue) {
