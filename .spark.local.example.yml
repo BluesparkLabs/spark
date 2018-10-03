@@ -1,0 +1,20 @@
+# .spark.local.yml — Environment-specific configuration.
+
+# (Optional) Environment name. Should be alpha-numeric, spaces are allowed. It will be used e.g. in
+# database export files' names.
+environment-name: Local
+
+# (Optional) Services of which you wish to override properties in the current environment.
+# Note: Definition of services in .spark.yml is not implemented yet, this is just a precursor.
+# The example included here is only used by the `mysql:dump` command.
+services:
+
+  # Name of the service.
+  mysql:
+    # Overridable properties vary across services.
+    connection:
+      host: 127.0.0.1
+      port: 7501
+      dbname: spark
+      user: spark
+      password: spark
