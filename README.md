@@ -1,25 +1,18 @@
 # Spark ✨
 
-Toolkit to develop, test and run Drupal websites.
+Toolkit to develop, test and run PHP applications.
 
-## Motivation, goals
-
-The developer team at [Bluespark](https://www.bluespark.com) have been discussing the need of a standardized local environment for a long time. We've tried a few directions over the past year or so, including an experiment with [Habitat](https://www.habitat.sh) or just relying on Docker Compose-centric solutions (i.e. [isholgueras/docker-lamp](https://github.com/isholgueras/docker-lamp) or [wodby/docker4drupal](https://github.com/wodby/docker4drupal)). The latter turned out to be a great approach, however, we had only used it as a starting point, so its maintenance across projects became challenging. Along the way we also started adding utility functions to our various wrapper scripts, so the need for organizing those in an upstream repository became clear.
-
-The motivation behind Spark is to provide an **environment** for local development and CI, and to ship **commands** we can standardize accross projects, e.g. creating anonymized database dumps, executing test suites, initializing a Solr index etc. Doing so in a way that only requires projects to include Spark as a simple **dependency**, while keeping the required configuration at the the minimum.
+Spark provides a turnkey Docker-based **environment** for development and continuous integration. It ships **commands** to create anonymized database exports, execute test suites, initialize a Solr index etc. Spark simply needs to be added as your project's **dependency**, and after some minimal configuration steps you're ready to go.
 
 ["Concerning toolkits"](https://blog.kentcdodds.com/concerning-toolkits-4db57296e1c3), an article published by [Kent C. Dodds](https://github.com/kentcdodds) had been a great inspiration for architecting Spark.
 
 ## Roadmap
 
-The project is at an early stage, some directions are still definitely being shaped. Here are some important highlights from our roadmap. (Please see [the issues](https://github.com/BluesparkLabs/spark/issues) for more.)
+* We're in the middle of implementing key database interactions in order to be able to use Spark for creating GDPR-compliant, anonymized database exports. ([See our board here.](https://github.com/BluesparkLabs/spark/projects/1))
+* After the features around interacting with the database we'll turn to getting prepared for our first alpha release, which will introduce a more flexible way for defining the required services for project environments.
 
-* Our immediate, short-term focus is on shipping a command to create sanitized, GDPR-compliant database dumps: [#11](https://github.com/BluesparkLabs/spark/issues/11);
-* Drupal 7 support is coming soon: [#15](https://github.com/BluesparkLabs/spark/issues/15);
-* We're currently evaluating whether we can/should replace the environment handling and rely on [Lando](https://docs.devwithlando.io): [#4](https://github.com/BluesparkLabs/spark/issues/4);
-* There is a discussion about the viability of turning Spark into a global dependency, as opposed to requiring it on the project-level: [#5](https://github.com/BluesparkLabs/spark/issues/5).
 
-## Getting Started — How to Sparkify your Drupal project
+## Getting Started — How to Sparkify your project
 
 Check out the [Drupal 8 example project](https://github.com/BluesparkLabs/spark/tree/master/examples/drupal8).
 
@@ -49,7 +42,11 @@ Here are the main steps outlined.
 
 **4. Create a file named `.spark.yml` in your project's root.** This will be your project-specific configuration that Spark will use.
 
-To learn about how to write your configuration, please refer to our [`.spark.example.yml` file](https://github.com/BluesparkLabs/spark/blob/master/.spark.example.yml).
+To learn about how to write your project-specific configuration, please refer to our [`.spark.example.yml` file](https://github.com/BluesparkLabs/spark/blob/master/.spark.example.yml).
+
+**5. Optional: Create a file named `.spark.local.yml` in your project's root.** This will be your environment-specific configuration that Spark will use. Do not commit this file to your repository. If you want to leverage environment-specific configuration for CI builds or in your hosting environment, the recommended way is to keep these files in your repository named specifically, i.e. `.spark.local.ci.yml`, and then ensure you have automation in place that renames it to `.spark.local.yml` in the appropriate environment.
+
+To learn about how to write your project-specific configuration, please refer to our [`.spark.example.yml` file](https://github.com/BluesparkLabs/spark/blob/master/.spark.local.example.yml).
 
 ### Recommended `composer.json` bits
 
@@ -70,7 +67,7 @@ See the [Drupal 8 example project's `composer.json` file](https://github.com/Blu
 }
 ```
 
-**2.** In case your site is Drupal 8 ([Drupal 7 support is coming](https://github.com/BluesparkLabs/spark/issues/15)), **use [drupal-composer/drupal-scaffold](https://packagist.org/packages/drupal-composer/drupal-scaffold) to install and update files that are outside of the `core`** folder and which are not part of the [drupal/core](https://packagist.org/packages/drupal/core) package. This Composer plugin will take care of the files whenever you install or update `drupal/core`, but to run it manually, you can add a script to your `composer.json`:
+**2.** In case you're working with a **Drupal site, use [drupal-composer/drupal-scaffold](https://packagist.org/packages/drupal-composer/drupal-scaffold) to install and update files that are outside of the `core`** folder and which are not part of the [drupal/core](https://packagist.org/packages/drupal/core) package. This Composer plugin will take care of the files whenever you install or update `drupal/core`, but to run it manually, you can add a script to your `composer.json`:
 
 ```javascript
 "scripts": {
@@ -102,6 +99,23 @@ To list all available commands, just issue `$ composer run spark`. Here is a hig
 |`drush`|Execute Drush commands|
 |`containers`|Manage a Docker-based environment|
 |`db`|Drop or import database, check its availability|
-|`drupal`|Create backup and upload to an Amazon S3 bucket, ensure `files` directory and `settings.php` files, install Drupal|
+|`drupal`|(Being deprecated.) Create backup and upload to an Amazon S3 bucket, ensure `files` directory and `settings.php` files, install Drupal|
+|`mysql`|Import or export database. (Will eventualy deprecate `db` command group.)
 |`solr`|Initialize a Solr core with configuration for Drupal, check its availability|
 |`test`|Execute test suite|
+
+## Commands
+
+Notes:
+
+* Commands will be documented here as they become ready for prime time.
+* ⚠️ When using command-line arguments, you need to include a double-dash (`--`) before your arguments. E.g. `composer run spark mysql:dump -- --non-sanitized`. (See the [reason for this](https://github.com/BluesparkLabs/spark/issues/10#issuecomment-424646525) and the [proposed solution](https://github.com/BluesparkLabs/spark/issues/36).)
+
+### `mysql:dump`
+
+Exports database to a file. By default the file is placed into the current folder and data is sanitized based on the sanitization rules in `.spark.yml.` The following command-line arguments are optional.
+
+|Argument|Description|
+|--------|-----------|
+|`--non-sanitized`|Produces a non-sanitized data export.|
+|`--destination`|Directory to where the export file will be placed. Can be an absolute or a relative path.|
