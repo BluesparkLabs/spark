@@ -131,9 +131,10 @@ class MySqlDump extends BaseTask {
 
   protected function filename() {
     $slugify = new Slugify();
-    return sprintf('%s%s--db--%s.sql.gz',
+    return sprintf('%s%s--db--%s--%s.sql.gz',
       $slugify->slugify($this->projectName),
       $this->environmentName ? ('--' . $slugify->slugify($this->environmentName)) : '',
+      !empty($this->sanitizations) ? 'sanitized' : 'NON-SANITIZED',
       // Date: UTC, ISO 8601 standard.
       gmdate('Y-m-d\THi\Z', time())
     );
