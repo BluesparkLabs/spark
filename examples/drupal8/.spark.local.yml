@@ -1,0 +1,15 @@
+# For a full reference, please see the `.spark.local.example.yml` file in the repository's root.
+# You should normally not commit this file to your repository. It's only included here so that you
+# have a working example.
+
+environment-name: Local
+
+services:
+
+  mysql:
+    connection:
+      host: 127.0.0.1
+      port: 7501
+      dbname: spark
+      user: spark
+      password: spark
