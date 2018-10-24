@@ -7,7 +7,7 @@ use Aws\S3\S3Client;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;
 
-class DrupalCommands extends \BluesparkLabs\Spark\Robo\Tasks {
+class DrupalCommands extends \BluesparkLabs\Spark\Robo\Commands {
 
   use \Droath\RoboDockerCompose\Task\loadTasks;
 

@@ -2,6 +2,7 @@
 
 namespace BluesparkLabs\Spark\Robo;
 
+use BluesparkLabs\Spark\Robo\loadTasks;
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 use Noodlehaus\Config;
@@ -12,11 +13,15 @@ use Respect\Validation\Validator as v;
 use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Robo;
 
-class Tasks extends \Robo\Tasks {
+class Commands extends \Robo\Tasks {
+
+  use loadTasks;
 
   const CONFIG_FILE_NAME = '.spark.yml';
+  const CONFIG_LOCAL_FILE_NAME = '.spark.local.yml';
 
   protected $config;
+  protected $config_local;
   protected $workDir;
   protected $webRoot;
   protected $dockerComposeFile;
@@ -46,7 +51,7 @@ class Tasks extends \Robo\Tasks {
 
     // Load config file from the project: .spark.yml.
     try {
-      $spark_config = $this->workDir . '/' . Tasks::CONFIG_FILE_NAME;
+      $spark_config = $this->workDir . '/' . Commands::CONFIG_FILE_NAME;
       $this->config = Config::load($spark_config);
 
       // The spark config file may also contain default options for Robo
@@ -55,8 +60,15 @@ class Tasks extends \Robo\Tasks {
       Robo::loadConfiguration([$spark_config]);
     }
     catch (FileNotFoundException $exception) {
-      throw new \Exception('Missing configuration file: ' . Tasks::CONFIG_FILE_NAME);
+      throw new \Exception('Missing configuration file: ' . Commands::CONFIG_FILE_NAME);
     }
+
+    // Load local config file if exists: .spark.local.yml.
+    $spark_config_local = $this->workDir . '/' . Commands::CONFIG_LOCAL_FILE_NAME;
+    if (file_exists($spark_config_local)) {
+      $this->config_local = Config::load($spark_config_local);
+    }
+
     $this->dockerComposeFile = './docker/docker-compose.' . $this->config->get('platform') . '.yml';
     $this->roboExecutable = $this->workDir . '/vendor/bin/robo';
 
@@ -79,11 +91,52 @@ class Tasks extends \Robo\Tasks {
       v::key('name', v::stringType()->length(1,32))
         ->key('platform', v::in(['drupal8']))
         ->assert($this->config->all());
+
+      if ($this->config->has('database-export.sanitization')) {
+        v::key('rules', v::arrayType())
+          ->assert($this->config->get('database-export.sanitization'));
+
+        if ($this->config->has('database-export.sanitization.faker-locale')) {
+          v::alpha('_')->noWhitespace()->assert($this->config->get('database-export.sanitization.faker-locale'));
+        }
+      }
+      if ($this->config->has('database-export.exclude-tables')) {
+        v::arrayType()->assert($this->config->get('database-export.exclude-tables'));
+      }
+      if ($this->config->has('database-export.no-data')) {
+        v::arrayType()->assert($this->config->get('database-export.no-data'));
+      }
     }
     catch (NestedValidationException $exception) {
       $this->yell('There are problems with your .spark.yml file.', 40, 'red');
       $this->io()->error($exception->getMessages());
-      $this->io()->note('📖 Documentation: https://github.com/BluesparkLabs/spark/wiki/Configuration');
+      $this->io()->note('📖  Documentation: https://github.com/BluesparkLabs/spark');
+      throw new Exception('Invalid configuration for Spark.');
+    }
+
+    // Validate .spark.local.yml if it exists.
+    if (!$this->config_local) {
+      return;
+    }
+
+    try {
+      if ($this->config_local->has('services.mysql.connection')) {
+        v::key('host', v::oneOf(v::stringType()->noWhitespace(), v::ip()))
+          ->key('port', v::intVal())
+          ->key('dbname', v::stringType()->length(1,64))
+          ->key('user', v::stringType()->length(1,32))
+          ->key('password', v::stringType()->length(1,64))
+          ->assert($this->config_local->get('services.mysql.connection'));
+      }
+
+      if ($this->config_local->has('environment-name')) {
+        v::stringType()->length(1, 32)->assert($this->config_local->get('environment-name'));
+      }
+    }
+    catch (NestedValidationException $exception) {
+      $this->yell('There are problems with your .spark.local.yml file.', 40, 'red');
+      $this->io()->error($exception->getMessages());
+      $this->io()->note('📖  Documentation: https://github.com/BluesparkLabs/spark');
       throw new Exception('Invalid configuration for Spark.');
     }
   }

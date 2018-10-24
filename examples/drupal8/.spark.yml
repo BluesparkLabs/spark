@@ -3,6 +3,26 @@
 name: Spark D8 Example
 platform: drupal8
 
+database-export:
+
+  sanitization:
+    faker-locale: fr_FR
+    rules:
+      users_field_data:
+        name: userName
+        mail: email
+
+  no-data:
+    - batch
+    - cache
+    - /cache_.*/
+    - flood
+    - persistent_login
+    - queue
+    - semaphore
+    - sessions
+    - watchdog
+
 command:
   drupal:
     backup:
