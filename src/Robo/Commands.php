@@ -89,7 +89,7 @@ class Commands extends \Robo\Tasks {
     // instead each command needs to invoke this method.
     try {
       v::key('name', v::stringType()->length(1,32))
-        ->key('platform', v::in(['drupal8']))
+        ->key('platform', v::in(['drupal7', 'drupal8']))
         ->assert($this->config->all());
 
       if ($this->config->has('database-export.sanitization')) {
