@@ -47,7 +47,10 @@ services:
       - "7501:3306"
 
   solr:
-    build: ./solr
+    build:
+      context: ./solr
+      args:
+        SOLR_CONFIG_VER: 8.x-2.1
     environment:
       SOLR_HEAP: 1024m
     volumes:
