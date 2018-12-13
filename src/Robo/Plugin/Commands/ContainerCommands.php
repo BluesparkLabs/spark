@@ -43,6 +43,8 @@ class ContainerCommands extends \BluesparkLabs\Spark\Robo\Commands {
     $this->taskDockerComposeDown()
       ->file($this->dockerComposeFile)
       ->projectName($this->config->get('name'))
+      ->removeOrphans()
+      ->rmi('all')
       ->run();
   }
 
