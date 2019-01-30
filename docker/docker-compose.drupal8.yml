@@ -16,6 +16,9 @@ services:
     working_dir: /var/www/html/web
     volumes:
       - "${SPARK_WORKDIR}:/var/www/html"
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.2
 
   nginx:
     image: wodby/drupal-nginx:8-1.13-4.0.2
@@ -31,6 +34,9 @@ services:
       - "${SPARK_WORKDIR}:/var/www/html"
     ports:
       - "7500:80"
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.3
 
   db:
     build: ./db
@@ -45,6 +51,9 @@ services:
       - "${SPARK_WORKDIR}:/opt/spark-project"
     ports:
       - "7501:3306"
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.4
 
   solr:
     build: ./solr
@@ -54,6 +63,9 @@ services:
       - "${SPARK_WORKDIR}:/opt/spark-project"
     ports:
       - "7502:8983"
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.5
 
   chrome:
     build: ./chrome
@@ -62,3 +74,14 @@ services:
       - '9222:9222'
     cap_add:
       - SYS_ADMIN
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.6
+
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
+         gateway: 10.5.0.1
